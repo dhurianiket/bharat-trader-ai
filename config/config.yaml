@@ -3,7 +3,7 @@ app:
   name: "BharatTrader-AI"
   environment: "paper"  # "paper" for simulation, "live" for real exchange execution
   server_host: "0.0.0.0"
-  server_port: 8000
+  server_port: 8080
   webhook_secret_key: "BHARAT_SECURE_KEY_REPLACE_ME_IN_PROD"
   execution_mode: "full_auto"  # "full_auto" (instant order) or "semi_auto" (wait for user confirmation)
   enable_ai_sentinel: true

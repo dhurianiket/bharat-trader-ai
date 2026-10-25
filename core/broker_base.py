@@ -68,3 +68,11 @@ class BaseBrokerAdapter(ABC):
     def get_account_balance(self) -> Dict[str, float]:
         """Retrieve current margin and cash balance."""
         pass
+
+    def deposit_virtual_funds(self, amount: float) -> float:
+        """Add demo / virtual agent capital to the paper trading account."""
+        return 0.0
+
+    def reset_virtual_funds(self, amount: float = 1000000.0) -> float:
+        """Reset demo virtual agent capital to a given amount."""
+        return 0.0

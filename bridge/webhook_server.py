@@ -1,12 +1,17 @@
 """
 Unified FastAPI Trading Server for BharatTrader-AI.
 Combines TradingView Webhooks, Risk Management, AI Sentinel,
-Options Greeks Analytics, and Action Center execution control.
+Options Greeks Analytics, Action Center, Agent Monies (Virtual Capital),
+and serves the Institutional Web Trading Terminal Dashboard.
 """
 
+import os
 import logging
 from typing import Dict, Any, List, Optional
 from fastapi import FastAPI, HTTPException, status
+from fastapi.responses import HTMLResponse
+from pydantic import BaseModel, Field
+
 from bridge.payload_models import TradingViewAlertPayload, GreeksRequestPayload
 from bridge.action_center import ActionCenter
 from core.broker_base import BaseBrokerAdapter, OrderRequest
@@ -17,6 +22,16 @@ from analytics.black76_greeks import black76_greeks, calculate_implied_volatilit
 from analytics.max_pain import calculate_max_pain
 
 logger = logging.getLogger("Bridge.WebhookServer")
+
+
+class DepositFundsRequest(BaseModel):
+    amount: float = Field(..., gt=0, description="Amount in INR to deposit to agent virtual capital")
+    secret_key: Optional[str] = Field(None, description="Optional authentication key")
+
+
+class ResetFundsRequest(BaseModel):
+    amount: float = Field(1000000.0, ge=0, description="Amount in INR to reset agent virtual capital to")
+    secret_key: Optional[str] = Field(None, description="Optional authentication key")
 
 
 def create_app(
@@ -34,6 +49,22 @@ def create_app(
         version="2.0.0"
     )
 
+    template_path = os.path.join(os.path.dirname(__file__), "templates", "dashboard.html")
+
+    # -------------------------------------------------------------
+    # WEB DASHBOARD ENDPOINTS
+    # -------------------------------------------------------------
+    @app.get("/", response_class=HTMLResponse)
+    @app.get("/dashboard", response_class=HTMLResponse)
+    def serve_dashboard():
+        if os.path.exists(template_path):
+            with open(template_path, "r", encoding="utf-8") as f:
+                return HTMLResponse(content=f.read())
+        return HTMLResponse("<h2>BharatTrader-AI Dashboard Template Not Found</h2>", status_code=404)
+
+    # -------------------------------------------------------------
+    # SYSTEM TELEMETRY & HEALTH
+    # -------------------------------------------------------------
     @app.get("/health")
     def health_check():
         balance = broker_adapter.get_account_balance()
@@ -56,6 +87,68 @@ def create_app(
             "account_balance": balance
         }
 
+    # -------------------------------------------------------------
+    # AGENT MONIES (VIRTUAL DEMO CAPITAL MANAGEMENT)
+    # -------------------------------------------------------------
+    @app.post("/agent/funds/deposit")
+    def deposit_virtual_funds(req: DepositFundsRequest):
+        new_balance = broker_adapter.deposit_virtual_funds(req.amount)
+        return {
+            "status": "SUCCESS",
+            "message": f"Successfully deposited ₹{req.amount:,.2f} to Agent Virtual Capital.",
+            "deposited_amount": req.amount,
+            "new_balance": new_balance
+        }
+
+    @app.post("/agent/funds/reset")
+    def reset_virtual_funds(req: ResetFundsRequest):
+        new_balance = broker_adapter.reset_virtual_funds(req.amount)
+        return {
+            "status": "SUCCESS",
+            "message": f"Agent Virtual Capital reset to ₹{req.amount:,.2f}.",
+            "new_balance": new_balance
+        }
+
+    @app.get("/agent/positions")
+    def get_agent_positions():
+        return {"positions": broker_adapter.get_positions()}
+
+    @app.post("/agent/positions/close/{order_id}")
+    def close_single_position(order_id: str, secret_key: Optional[str] = None):
+        positions = broker_adapter.get_positions()
+        target_pos = None
+        for p in positions:
+            if str(p.get("order_id")) == str(order_id) or str(positions.index(p)) == str(order_id):
+                target_pos = p
+                break
+
+        if not target_pos:
+            # Fallback close first position
+            if positions:
+                target_pos = positions[0]
+
+        if target_pos:
+            qty = abs(int(target_pos.get("quantity", target_pos.get("netQty", 1))))
+            action = "SELL" if target_pos.get("action") == "BUY" else "BUY"
+            symbol = target_pos.get("symbol", target_pos.get("tradingsymbol", ""))
+            res = broker_adapter.place_order(OrderRequest(
+                symbol=symbol,
+                action=action,
+                quantity=qty,
+                order_type="MARKET",
+                product="INTRADAY",
+                tag="MANUAL_SQUARE_OFF"
+            ))
+            # Remove from paper positions if in paper mode
+            if broker_adapter.is_paper and target_pos in broker_adapter._paper_positions:
+                broker_adapter._paper_positions.remove(target_pos)
+            return {"status": "SUCCESS", "result": res.model_dump()}
+
+        return {"status": "NOT_FOUND", "message": f"Position {order_id} not found."}
+
+    # -------------------------------------------------------------
+    # TRADINGVIEW WEBHOOK INGESTION
+    # -------------------------------------------------------------
     @app.post("/webhook", response_model=Dict[str, Any])
     def handle_tradingview_alert(payload: TradingViewAlertPayload):
         # 1. Authenticate Secret Key
@@ -77,7 +170,6 @@ def create_app(
 
         # 3. AI Sentinel & Composite Scoring Confirmation (if enabled)
         if enable_ai_sentinel:
-            # Synthetic indicators payload if raw alert
             tech_indicators = {"rsi": 55.0, "supertrend_direction": 1 if payload.action.upper() == "BUY" else -1, "ema_aligned": True}
             regime_info = {"regime": "TRENDING_BULL" if payload.action.upper() == "BUY" else "TRENDING_BEAR"}
             flow_info = {"flow_regime": "LONG_BUILDUP" if payload.action.upper() == "BUY" else "SHORT_BUILDUP"}
@@ -138,6 +230,9 @@ def create_app(
         result = action_center.handle_incoming_signal(order_req, broker_adapter, risk_engine)
         return result
 
+    # -------------------------------------------------------------
+    # PANIC EMERGENCY KILL-SWITCH
+    # -------------------------------------------------------------
     @app.post("/kill-switch")
     def execute_kill_switch(secret_key: str):
         if secret_key != configured_secret:
@@ -151,6 +246,9 @@ def create_app(
             "closed_orders": [r.model_dump() for r in results]
         }
 
+    # -------------------------------------------------------------
+    # ACTION CENTER (SEMI-AUTO APPROVAL QUEUE)
+    # -------------------------------------------------------------
     @app.get("/action-center/pending")
     def get_pending_orders():
         return {"pending_orders": action_center.list_pending()}
@@ -165,6 +263,9 @@ def create_app(
             raise HTTPException(status_code=404, detail=f"Order {queue_id} not found in pending queue.")
         return {"status": "APPROVED", "result": res.model_dump()}
 
+    # -------------------------------------------------------------
+    # OPTIONS ANALYTICS (GREEKS & MAX PAIN)
+    # -------------------------------------------------------------
     @app.post("/analytics/greeks")
     def calculate_greeks(req: GreeksRequestPayload):
         vol = req.volatility
@@ -179,7 +280,7 @@ def create_app(
             )
 
         if not vol:
-            vol = 0.20  # Fallback 20% volatility
+            vol = 0.20
 
         greeks = black76_greeks(
             option_type=req.option_type,

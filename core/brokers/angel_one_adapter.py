@@ -21,6 +21,18 @@ class AngelOneAdapter(BaseBrokerAdapter):
         self.totp_secret = config.get("totp_secret", "")
         self.smart_api = None
         self._paper_positions: List[Dict[str, Any]] = []
+        self._paper_cash: float = 1000000.0
+
+    def deposit_virtual_funds(self, amount: float) -> float:
+        if amount > 0:
+            self._paper_cash += amount
+            logger.info(f"[AGENT MONIES] Deposited virtual capital ₹{amount:,.2f}. New total: ₹{self._paper_cash:,.2f}")
+        return self._paper_cash
+
+    def reset_virtual_funds(self, amount: float = 1000000.0) -> float:
+        self._paper_cash = max(0.0, amount)
+        logger.info(f"[AGENT MONIES] Reset virtual capital to ₹{self._paper_cash:,.2f}")
+        return self._paper_cash
 
     def connect(self) -> bool:
         if self.is_paper:
@@ -155,7 +167,8 @@ class AngelOneAdapter(BaseBrokerAdapter):
 
     def get_account_balance(self) -> Dict[str, float]:
         if self.is_paper or not self.smart_api:
-            return {"available_cash": 1000000.0, "used_margin": 0.0}
+            used = sum(float(p.get("price", 0.0)) * int(p.get("quantity", 0)) for p in self._paper_positions)
+            return {"available_cash": self._paper_cash, "used_margin": used}
         try:
             rms = self.smart_api.rmsLimit()
             data = rms.get("data", {})

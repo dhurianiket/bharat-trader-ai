@@ -21,6 +21,18 @@ class ZerodhaAdapter(BaseBrokerAdapter):
         self.user_id = config.get("user_id", "")
         self.kite_client = None
         self._paper_positions: List[Dict[str, Any]] = []
+        self._paper_cash: float = 1000000.0  # ₹10,00,000 default virtual agent capital
+
+    def deposit_virtual_funds(self, amount: float) -> float:
+        if amount > 0:
+            self._paper_cash += amount
+            logger.info(f"[AGENT MONIES] Deposited virtual capital ₹{amount:,.2f}. New total: ₹{self._paper_cash:,.2f}")
+        return self._paper_cash
+
+    def reset_virtual_funds(self, amount: float = 1000000.0) -> float:
+        self._paper_cash = max(0.0, amount)
+        logger.info(f"[AGENT MONIES] Reset virtual capital to ₹{self._paper_cash:,.2f}")
+        return self._paper_cash
 
     def connect(self) -> bool:
         if self.is_paper:
@@ -191,7 +203,9 @@ class ZerodhaAdapter(BaseBrokerAdapter):
 
     def get_account_balance(self) -> Dict[str, float]:
         if self.is_paper:
-            return {"available_cash": 1000000.0, "used_margin": 0.0}
+            # Calculate used margin in paper mode
+            used = sum(float(p.get("price", 0.0)) * int(p.get("quantity", 0)) for p in self._paper_positions)
+            return {"available_cash": self._paper_cash, "used_margin": used}
         if not self.kite_client:
             return {"available_cash": 0.0, "used_margin": 0.0}
         try:
