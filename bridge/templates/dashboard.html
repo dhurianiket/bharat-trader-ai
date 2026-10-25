@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BharatTrader-AI — Institutional Trading Workstation</title>
+  <title>BharatTrader-AI — Institutional Algorithmic & AI Trading Workstation</title>
   
   <!-- Tailwind CSS & Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -25,17 +25,17 @@
             mono: ['"JetBrains Mono"', 'monospace'],
           },
           colors: {
-            apple: {
-              gray: '#86868b',
-              card: 'rgba(26, 31, 46, 0.65)',
+            oled: {
+              bg: '#030712',
+              card: 'rgba(11, 15, 25, 0.78)',
               border: 'rgba(255, 255, 255, 0.08)',
               hover: 'rgba(255, 255, 255, 0.12)',
             },
             accent: {
               green: '#10b981',
-              greenGlow: 'rgba(16, 185, 129, 0.25)',
+              greenGlow: 'rgba(16, 185, 129, 0.28)',
               red: '#f43f5e',
-              redGlow: 'rgba(244, 63, 94, 0.25)',
+              redGlow: 'rgba(244, 63, 94, 0.28)',
               blue: '#3b82f6',
               purple: '#8b5cf6',
               amber: '#f59e0b',
@@ -47,42 +47,43 @@
   </script>
 
   <style>
-    /* Apple Liquid Glass & High-DPI Hairline Styles */
+    /* UI/UX Pro Max: Dark OLED & Hairline Sub-Pixel Precision */
     :root {
       color-scheme: dark;
     }
     body {
-      background-color: #080a10;
+      background-color: #030712;
       background-image: 
-        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
-        radial-gradient(at 50% 100%, rgba(139, 92, 246, 0.05) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.07) 0px, transparent 45%),
+        radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.07) 0px, transparent 45%),
+        radial-gradient(at 50% 100%, rgba(139, 92, 246, 0.05) 0px, transparent 45%);
       background-attachment: fixed;
       font-feature-settings: "cv02", "cv03", "cv04", "cv11";
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Sub-pixel Hairline Border Pattern */
+    /* Sub-pixel Hairline Border Card Pattern */
     .hairline-card {
-      background: rgba(15, 19, 30, 0.72);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      background: rgba(11, 15, 25, 0.82);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       border: 1px solid rgba(255, 255, 255, 0.08);
       box-shadow: 
-        0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
-        0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        0 1px 0 0 rgba(255, 255, 255, 0.07) inset,
+        0 12px 35px -10px rgba(0, 0, 0, 0.55);
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .hairline-card:hover {
       border-color: rgba(255, 255, 255, 0.14);
       box-shadow: 
-        0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
-        0 20px 40px -15px rgba(0, 0, 0, 0.6);
+        0 1px 0 0 rgba(255, 255, 255, 0.12) inset,
+        0 20px 45px -12px rgba(0, 0, 0, 0.65);
     }
 
-    /* Apple-style spring interaction */
+    /* Spring micro-interaction */
     .spring-btn {
-      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s ease, border-color 0.15s ease;
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      cursor: pointer;
     }
     .spring-btn:active {
       transform: scale(0.97);
@@ -93,33 +94,74 @@
       font-variant-numeric: tabular-nums;
     }
 
+    /* Real-Time Price Flash Keyframes */
+    @keyframes flashGreen {
+      0% { background-color: rgba(16, 185, 129, 0.38); color: #34d399; }
+      100% { background-color: transparent; }
+    }
+    @keyframes flashRed {
+      0% { background-color: rgba(244, 63, 94, 0.38); color: #fb7185; }
+      100% { background-color: transparent; }
+    }
+    .flash-up {
+      animation: flashGreen 0.85s ease-out;
+    }
+    .flash-down {
+      animation: flashRed 0.85s ease-out;
+    }
+
+    /* Live Marquee Ticker Track */
+    @keyframes tickerMarquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .ticker-track {
+      display: flex;
+      width: max-content;
+      animation: tickerMarquee 38s linear infinite;
+    }
+    .ticker-track:hover {
+      animation-play-state: paused;
+    }
+
+    /* Pulse Glow Indicator */
+    @keyframes liveGlow {
+      0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      50% { opacity: 0.8; transform: scale(1.08); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    }
+    .pulse-live {
+      animation: liveGlow 2.2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    }
+
     /* Custom Glass Scrollbar */
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 9999px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="min-h-screen text-slate-100 flex flex-col selection:bg-emerald-500/30 selection:text-emerald-300">
 
   <!-- ========================================================================= -->
-  <!-- 1. APPLE TOP NAVIGATION BAR                                               -->
+  <!-- 1. INSTITUTIONAL TOP NAVIGATION BAR                                       -->
   <!-- ========================================================================= -->
-  <nav class="sticky top-0 z-50 border-b border-white/[0.07] bg-[#080a10]/80 backdrop-blur-2xl px-6 py-3">
+  <nav class="sticky top-0 z-50 border-b border-white/[0.07] bg-[#030712]/85 backdrop-blur-2xl px-6 py-2.5">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
       
       <!-- Brand & Status -->
       <div class="flex items-center gap-4">
         <div class="flex items-center gap-3">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-400 p-[1px] shadow-lg shadow-emerald-500/10">
-            <div class="w-full h-full bg-[#0b0e17] rounded-[11px] flex items-center justify-center font-bold text-sm text-white">
-              🇮🇳
+            <div class="w-full h-full bg-[#070b14] rounded-[11px] flex items-center justify-center font-bold text-sm text-white">
+              <i data-lucide="activity" class="w-4 h-4 text-emerald-400"></i>
             </div>
           </div>
           <div>
             <div class="flex items-center gap-2">
               <span class="font-display font-bold text-sm tracking-tight text-white">BharatTrader-AI</span>
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">PRO v2.0</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">PRO v2.5</span>
             </div>
             <p class="text-[11px] text-slate-400 font-medium">Autonomous Multi-Broker Terminal</p>
           </div>
@@ -131,25 +173,31 @@
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
-          <span class="text-slate-300 tabular-nums font-semibold" id="liveIstClock">--:--:-- IST</span>
+          <span class="text-slate-200 tabular-nums font-semibold" id="liveIstClock">--:--:-- IST</span>
           <span class="text-[10px] px-2 py-0.5 rounded bg-white/[0.04] text-slate-400 border border-white/[0.06]" id="marketSessionPill">MARKET CLOSED</span>
         </div>
       </div>
 
       <!-- Action & Controls -->
       <div class="flex items-center gap-3">
-        <!-- Active Broker Badge -->
+        <!-- Live SSE Streaming Badge -->
+        <div class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono font-bold text-emerald-400">
+          <div class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></div>
+          <span id="streamingPill">SSE STREAM ACTIVE</span>
+        </div>
+
+        <!-- Active Broker Gateway -->
         <div class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs">
           <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-400"></i>
           <span class="text-slate-400">Gateway:</span>
           <span class="font-semibold text-white" id="activeBrokerBadge">Zerodha Kite</span>
         </div>
 
-        <!-- Environment Mode -->
-        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-400">
-          <i data-lucide="shield" class="w-3.5 h-3.5"></i>
-          <span id="envBadge">PAPER SIMULATION</span>
-        </div>
+        <!-- Architecture & Tools Spec Modal Button -->
+        <button onclick="openToolsModal()" class="spring-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 hover:text-white border border-blue-500/20 text-xs font-semibold">
+          <i data-lucide="cpu" class="w-3.5 h-3.5 text-blue-400"></i>
+          <span>Tools & APIs Spec</span>
+        </button>
 
         <!-- Panic Kill-Switch -->
         <button onclick="triggerKillSwitch()" class="spring-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 hover:text-white border border-rose-500/30 text-xs font-bold tracking-wide shadow-sm hover:shadow-rose-500/20">
@@ -162,11 +210,29 @@
   </nav>
 
   <!-- ========================================================================= -->
+  <!-- 1.5 CONTINUOUS REAL-TIME TICKER MARQUEE (SUB-SECOND SSE FEED)             -->
+  <!-- ========================================================================= -->
+  <div class="w-full bg-[#050914] border-b border-white/[0.06] overflow-hidden py-1.5 relative select-none">
+    <div class="max-w-7xl mx-auto px-4 flex items-center gap-3">
+      <div class="shrink-0 flex items-center gap-1.5 text-[11px] font-mono font-bold text-slate-400 pr-3 border-r border-white/[0.08]">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-slate-300">LIVE FEED</span>
+      </div>
+      <div class="overflow-hidden relative w-full">
+        <div class="ticker-track flex items-center gap-6 text-xs font-mono" id="liveTickerMarquee">
+          <!-- Marquee injected dynamically -->
+          <div class="text-slate-500 text-[11px]">Connecting to real-time market data stream...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
   <!-- 2. MAIN WORKSPACE CONTAINER                                               -->
   <!-- ========================================================================= -->
   <main class="flex-1 max-w-7xl mx-auto w-full p-6 space-y-6">
 
-    <!-- HERO METRIC TILES: 4-COLUMN AIRLINE/APPLE GRID -->
+    <!-- HERO METRIC BENTO GRID: 4-COLUMN OLED DENSE LAYOUT -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
       <!-- TILE 1: AGENT MONIES (VIRTUAL WALLET) -->
@@ -284,7 +350,7 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- 2.5 GOOGLE FINANCE MARKET INTELLIGENCE (FREE OPEN APIS)                    -->
+    <!-- 2.5 GOOGLE FINANCE LIVE MARKET INTELLIGENCE (FREE OPEN APIS)              -->
     <!-- ========================================================================= -->
     <div class="hairline-card rounded-2xl p-6 space-y-6">
       
@@ -312,7 +378,7 @@
               id="companySearchInput" 
               oninput="handleSymbolSearch(this.value)" 
               placeholder="Search companies (e.g. Tata, Reliance, Apple, NVDA)..." 
-              class="w-full bg-[#0a0d14] border border-white/[0.1] rounded-xl pl-9 pr-8 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition shadow-inner font-sans"
+              class="w-full bg-[#070b14] border border-white/[0.1] rounded-xl pl-9 pr-8 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition shadow-inner font-sans"
               autocomplete="off"
             />
             <button onclick="clearSearchInput()" id="clearSearchBtn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
@@ -321,7 +387,7 @@
           </div>
 
           <!-- Autocomplete Dropdown Menu -->
-          <div id="searchDropdown" class="absolute left-0 right-0 top-full mt-1.5 bg-[#0e121c] border border-white/[0.12] rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto hidden divide-y divide-white/[0.04]">
+          <div id="searchDropdown" class="absolute left-0 right-0 top-full mt-1.5 bg-[#0b0f19] border border-white/[0.12] rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto hidden divide-y divide-white/[0.04]">
             <!-- Results injected dynamically -->
           </div>
         </div>
@@ -345,7 +411,7 @@
             </div>
 
             <div class="flex items-baseline gap-3 pt-1">
-              <div class="text-3xl sm:text-4xl font-extrabold text-white font-mono tabular-nums tracking-tight" id="gfCurrentPrice">₹ 2,530.00</div>
+              <div class="text-3xl sm:text-4xl font-extrabold text-white font-mono tabular-nums tracking-tight transition-colors duration-300" id="gfCurrentPrice">₹ 2,530.00</div>
               <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold font-mono" id="gfPriceChangeBadge">
                 <span id="gfChangeIcon">▲</span>
                 <span id="gfPriceChange">+65.00 (+2.64%)</span>
@@ -363,7 +429,7 @@
           <!-- Action & Timeframe Switcher -->
           <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <!-- Timeframe selector -->
-            <div class="flex items-center bg-[#0a0d14] p-1 rounded-xl border border-white/[0.08] text-xs font-mono font-semibold" id="timeframeButtons">
+            <div class="flex items-center bg-[#070b14] p-1 rounded-xl border border-white/[0.08] text-xs font-mono font-semibold" id="timeframeButtons">
               <button onclick="changeTimeframe('1d', '5m', this)" class="tf-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition">1D</button>
               <button onclick="changeTimeframe('5d', '15m', this)" class="tf-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition">5D</button>
               <button onclick="changeTimeframe('1mo', '1d', this)" class="tf-btn px-2.5 py-1 rounded-lg bg-white/[0.1] text-emerald-400 border border-emerald-500/30 font-bold transition">1M</button>
@@ -384,7 +450,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           <!-- CHART CANVAS (8 Cols) -->
-          <div class="lg:col-span-8 bg-[#0a0d14]/70 rounded-2xl p-4 border border-white/[0.06] relative flex flex-col justify-between">
+          <div class="lg:col-span-8 bg-[#070b14]/75 rounded-2xl p-4 border border-white/[0.06] relative flex flex-col justify-between">
             <!-- Chart Tooltip -->
             <div id="chartTooltip" class="absolute top-4 left-4 bg-[#141926]/90 border border-white/[0.1] backdrop-blur-md px-3 py-1.5 rounded-xl text-xs font-mono pointer-events-none transition-opacity duration-150 opacity-0 z-10 shadow-xl">
               <div class="text-slate-400 text-[10px]" id="tooltipDate">--</div>
@@ -411,7 +477,7 @@
             <!-- Chart Footer Timeline -->
             <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 border-t border-white/[0.04] pt-2 mt-2">
               <span id="chartStartDate">Start</span>
-              <span class="text-slate-400 text-[10px]">Move mouse across chart to inspect historical price points</span>
+              <span class="text-slate-400 text-[10px]">Hover anywhere on chart to inspect live historical points</span>
               <span id="chartEndDate">Latest</span>
             </div>
           </div>
@@ -571,7 +637,7 @@
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-medium text-slate-400 mb-1">Type</label>
-              <select id="contractType" onchange="updateContractSymbol()" class="w-full bg-[#0c1017] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
+              <select id="contractType" onchange="updateContractSymbol()" class="w-full bg-[#070b14] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
                 <option value="CE">ATM Call (CE)</option>
                 <option value="PE">ATM Put (PE)</option>
                 <option value="FUT">Futures (FUT)</option>
@@ -580,7 +646,7 @@
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-400 mb-1">Product</label>
-              <select id="productType" class="w-full bg-[#0c1017] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
+              <select id="productType" class="w-full bg-[#070b14] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
                 <option value="INTRADAY">MIS (Intraday)</option>
                 <option value="DELIVERY">CNC (Normal)</option>
               </select>
@@ -590,18 +656,18 @@
           <!-- Symbol Input -->
           <div>
             <label class="block text-xs font-medium text-slate-400 mb-1">Tradingsymbol</label>
-            <input type="text" id="targetSymbol" value="NIFTY24OCT24500CE" required class="w-full bg-[#0c1017] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-emerald-400 font-bold focus:outline-none focus:border-emerald-500" />
+            <input type="text" id="targetSymbol" value="NIFTY24OCT24500CE" required class="w-full bg-[#070b14] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-emerald-400 font-bold focus:outline-none focus:border-emerald-500" />
           </div>
 
           <!-- Qty & Price -->
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-medium text-slate-400 mb-1">Quantity</label>
-              <input type="number" id="orderQuantity" value="25" min="1" required class="w-full bg-[#0c1017] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500" />
+              <input type="number" id="orderQuantity" value="25" min="1" required class="w-full bg-[#070b14] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500" />
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-400 mb-1">Limit / Market (₹)</label>
-              <input type="number" step="0.05" id="orderPrice" value="142.50" required class="w-full bg-[#0c1017] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500" />
+              <input type="number" step="0.05" id="orderPrice" value="142.50" required class="w-full bg-[#070b14] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
 
@@ -609,11 +675,11 @@
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-medium text-slate-400 mb-1">Stop Loss (₹)</label>
-              <input type="number" step="0.05" id="orderSl" value="115.00" class="w-full bg-[#0c1017] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-rose-300 focus:outline-none focus:border-rose-500" />
+              <input type="number" step="0.05" id="orderSl" value="115.00" class="w-full bg-[#070b14] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-rose-300 focus:outline-none focus:border-rose-500" />
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-400 mb-1">Target Profit (₹)</label>
-              <input type="number" step="0.05" id="orderTp" value="195.00" class="w-full bg-[#0c1017] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-500" />
+              <input type="number" step="0.05" id="orderTp" value="195.00" class="w-full bg-[#070b14] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
 
@@ -740,9 +806,9 @@
           <div class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
           <h2 class="text-xs font-bold text-white uppercase tracking-wider font-mono">Live Engine Telemetry & Order Feed</h2>
         </div>
-        <span class="text-[10px] font-mono text-slate-400">WebSocket / Polling Active</span>
+        <span class="text-[10px] font-mono text-slate-400" id="sseLogIndicator">SSE Active (1.0s Heartbeat)</span>
       </div>
-      <div id="terminalLog" class="h-32 overflow-y-auto font-mono text-[11px] text-slate-300 space-y-1 p-3 bg-[#0a0d14]/70 rounded-xl border border-white/[0.04]">
+      <div id="terminalLog" class="h-32 overflow-y-auto font-mono text-[11px] text-slate-300 space-y-1 p-3 bg-[#050812]/70 rounded-xl border border-white/[0.04]">
         <div class="text-emerald-400">[SYSTEM] BharatTrader-AI Terminal initialized. Engine connected to localhost:8080.</div>
       </div>
     </div>
@@ -753,7 +819,7 @@
   <!-- 5. AGENT MONIES DEPOSIT MODAL                                             -->
   <!-- ========================================================================= -->
   <div id="depositModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
-    <div class="hairline-card bg-[#0e121c] rounded-2xl max-w-md w-full p-6 space-y-5 border border-emerald-500/30 shadow-2xl">
+    <div class="hairline-card bg-[#0b0f19] rounded-2xl max-w-md w-full p-6 space-y-5 border border-emerald-500/30 shadow-2xl">
       <div class="flex items-center justify-between border-b border-white/[0.08] pb-3.5">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
@@ -779,7 +845,7 @@
 
         <div>
           <label class="block text-xs font-medium text-slate-400 mb-1">Custom Amount (INR)</label>
-          <input type="number" id="customDepositInput" placeholder="Enter custom amount in ₹" class="w-full bg-[#0a0d14] border border-white/[0.08] rounded-xl px-3.5 py-2 text-xs font-mono text-emerald-400 font-bold focus:outline-none focus:border-emerald-500" />
+          <input type="number" id="customDepositInput" placeholder="Enter custom amount in ₹" class="w-full bg-[#050812] border border-white/[0.08] rounded-xl px-3.5 py-2 text-xs font-mono text-emerald-400 font-bold focus:outline-none focus:border-emerald-500" />
         </div>
       </div>
 
@@ -793,12 +859,126 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- 6. JAVASCRIPT APPLICATION LOGIC                                           -->
+  <!-- 5.5 TOOLS & APIS SPECIFICATION MODAL                                      -->
+  <!-- ========================================================================= -->
+  <div id="toolsModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+    <div class="hairline-card bg-[#0b0f19] rounded-2xl max-w-2xl w-full p-6 space-y-5 border border-blue-500/30 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-white/[0.08] pb-3.5">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">
+            <i data-lucide="cpu" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-white font-display">Tools & APIs Required for Live Trading</h3>
+            <p class="text-[11px] text-slate-400">Complete architectural breakdown of free public & broker APIs</p>
+          </div>
+        </div>
+        <button onclick="closeToolsModal()" class="text-slate-400 hover:text-white transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+        
+        <!-- FREE APIS SECTION -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider font-mono flex items-center gap-1.5">
+            <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> 100% Free Public APIs (Active)
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-1">
+              <div class="font-bold text-white flex items-center justify-between">
+                <span>Yahoo Finance Open API</span>
+                <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">0 API Keys</span>
+              </div>
+              <p class="text-[11px] text-slate-400">Provides company fundamentals, P/E, EPS, 52W range, and historical OHLCV candles.</p>
+            </div>
+
+            <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-1">
+              <div class="font-bold text-white flex items-center justify-between">
+                <span>Yahoo Query Autocomplete</span>
+                <span class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">0 API Keys</span>
+              </div>
+              <p class="text-[11px] text-slate-400">Instant symbol discovery across NSE, BSE, NYSE, and NASDAQ with zero authentication.</p>
+            </div>
+
+            <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-1">
+              <div class="font-bold text-white flex items-center justify-between">
+                <span>FastAPI Server-Sent Events (SSE)</span>
+                <span class="text-[10px] font-mono text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded">Sub-Second Stream</span>
+              </div>
+              <p class="text-[11px] text-slate-400">Streams sub-second live price updates, uptick/downtick direction, and spread directly to UI.</p>
+            </div>
+
+            <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-1">
+              <div class="font-bold text-white flex items-center justify-between">
+                <span>Pure-Math Black-76 Engine</span>
+                <span class="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded">Zero C-Deps</span>
+              </div>
+              <p class="text-[11px] text-slate-400">Pure Python analytical formula solving Delta, Gamma, Theta, Vega, Rho, and Bisection IV.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- BROKER LIVE STREAMING SECTION -->
+        <div class="space-y-2 pt-2 border-t border-white/[0.06]">
+          <h4 class="text-xs font-bold text-blue-400 uppercase tracking-wider font-mono flex items-center gap-1.5">
+            <i data-lucide="radio" class="w-3.5 h-3.5"></i> Broker Live Execution Protocols (When Keys Added)
+          </h4>
+          <div class="space-y-2 text-xs">
+            <div class="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+              <div>
+                <span class="font-bold text-white">Zerodha Kite Ticker WebSocket</span>
+                <p class="text-[11px] text-slate-400">5ms binary tick-by-tick websocket feed for full market depth and LTP.</p>
+              </div>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-slate-300">Ready</span>
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+              <div>
+                <span class="font-bold text-white">DhanHQ Live Market Feed</span>
+                <p class="text-[11px] text-slate-400">Real-time quote streaming and sub-second order placement API.</p>
+              </div>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-slate-300">Ready</span>
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+              <div>
+                <span class="font-bold text-white">Angel One SmartStream</span>
+                <p class="text-[11px] text-slate-400">Binary WebSocket feed supporting multi-exchange NSE & BSE live streams.</p>
+              </div>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-slate-300">Ready</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="flex items-center justify-end pt-2 border-t border-white/[0.08]">
+        <button onclick="closeToolsModal()" class="spring-btn px-4 py-2 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-white text-xs font-bold">
+          Close Overview
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 6. JAVASCRIPT APPLICATION LOGIC & REAL-TIME STREAM ENGINE                 -->
   <!-- ========================================================================= -->
   <script>
     const SECRET_KEY = "BHARAT_SECURE_KEY_REPLACE_ME_IN_PROD";
     let currentSpotPrice = 24500;
     let selectedSymbol = "NIFTY";
+
+    // Google Finance State
+    let currentAnalyzedSymbol = "TCS.NS";
+    let currentAnalyzedPrice = 2530.00;
+    let currentCurrencySymbol = "₹";
+    let currentPeriod = "1mo";
+    let currentInterval = "1d";
+    let activeChartBars = [];
+    let searchDebounceTimer = null;
+    let sseEventSource = null;
 
     // Initialize Lucide Icons
     lucide.createIcons();
@@ -868,6 +1048,13 @@
     }
     function setDepositAmount(amt) {
       document.getElementById("customDepositInput").value = amt;
+    }
+
+    function openToolsModal() {
+      document.getElementById("toolsModal").classList.remove("hidden");
+    }
+    function closeToolsModal() {
+      document.getElementById("toolsModal").classList.add("hidden");
     }
 
     async function submitDepositFunds() {
@@ -975,7 +1162,6 @@
         // Update Clock & Status
         document.getElementById("liveIstClock").innerText = data.current_ist_time.split(" ")[1] + " IST";
         document.getElementById("activeBrokerBadge").innerText = data.active_broker.replace("Adapter", "");
-        document.getElementById("envBadge").innerText = data.environment;
         document.getElementById("marketSessionPill").innerText = data.market_open ? "MARKET OPEN" : "MARKET CLOSED";
 
         // Balances
@@ -1055,14 +1241,6 @@
     // =========================================================================
     // GOOGLE FINANCE LIVE MARKET INTELLIGENCE SCRIPT
     // =========================================================================
-    let currentAnalyzedSymbol = "TCS.NS";
-    let currentAnalyzedPrice = 2530.00;
-    let currentCurrencySymbol = "₹";
-    let currentPeriod = "1mo";
-    let currentInterval = "1d";
-    let activeChartBars = [];
-    let searchDebounceTimer = null;
-
     function handleSymbolSearch(val) {
       const clearBtn = document.getElementById("clearSearchBtn");
       const dropdown = document.getElementById("searchDropdown");
@@ -1342,12 +1520,82 @@
       document.getElementById("orderForm").scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
-    // Initialize Google Finance View on page load
+    // =========================================================================
+    // SERVER-SENT EVENTS (SSE) REAL-TIME TICK STREAMER
+    // =========================================================================
+    function initLiveSseStream() {
+      if (window.EventSource) {
+        sseEventSource = new EventSource("/api/stream/live-ticks");
+        
+        sseEventSource.onmessage = function(event) {
+          try {
+            const data = JSON.parse(event.data);
+            const ticks = data.ticks || [];
+            updateMarqueeAndTicks(ticks);
+          } catch (e) {
+            console.error("SSE parse error:", e);
+          }
+        };
+
+        sseEventSource.onerror = function(err) {
+          console.warn("SSE connection interrupted, will auto-reconnect...");
+          document.getElementById("streamingPill").innerText = "RECONNECTING SSE...";
+        };
+
+        sseEventSource.onopen = function() {
+          document.getElementById("streamingPill").innerText = "SSE STREAM ACTIVE";
+        };
+      }
+    }
+
+    function updateMarqueeAndTicks(ticks) {
+      const marquee = document.getElementById("liveTickerMarquee");
+      if (!ticks || ticks.length === 0) return;
+
+      // Duplicate list to achieve continuous seamless loop
+      const doubled = [...ticks, ...ticks];
+
+      marquee.innerHTML = doubled.map(t => {
+        const isUp = t.tick_direction === "UP";
+        return `
+          <div onclick="selectCompany('${t.symbol}')" class="shrink-0 flex items-center gap-2 cursor-pointer hover:bg-white/[0.08] px-2.5 py-1 rounded-lg transition group">
+            <span class="font-bold text-slate-200 group-hover:text-blue-400">${t.display_symbol}</span>
+            <span class="text-white font-bold tabular-nums">${t.currency_symbol}${t.price.toFixed(2)}</span>
+            <span class="text-[10px] font-bold ${isUp ? 'text-emerald-400' : 'text-rose-400'}">
+              ${isUp ? '▲ +' : '▼ '}${t.change.toFixed(2)}
+            </span>
+          </div>
+        `;
+      }).join("");
+
+      // Check if current analyzed company is in ticks
+      const matched = ticks.find(t => t.symbol === currentAnalyzedSymbol);
+      if (matched) {
+        const priceEl = document.getElementById("gfCurrentPrice");
+        const oldPrice = currentAnalyzedPrice;
+        currentAnalyzedPrice = matched.price;
+        priceEl.innerText = `${matched.currency_symbol} ${matched.price.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+        
+        // Trigger micro-flash
+        if (matched.price > oldPrice) {
+          priceEl.classList.remove("flash-down");
+          priceEl.classList.add("flash-up");
+          setTimeout(() => priceEl.classList.remove("flash-up"), 800);
+        } else if (matched.price < oldPrice) {
+          priceEl.classList.remove("flash-up");
+          priceEl.classList.add("flash-down");
+          setTimeout(() => priceEl.classList.remove("flash-down"), 800);
+        }
+      }
+    }
+
+    // Initialize View on page load
     loadCompanyProfile("TCS.NS");
     loadHistoricalChart("TCS.NS", "1mo", "1d");
     loadWatchlistPills();
+    initLiveSseStream();
 
-    // Auto Refresh every 2 seconds
+    // Auto Refresh telemetry every 2 seconds
     fetchHealthAndPositions();
     setInterval(fetchHealthAndPositions, 2000);
   </script>

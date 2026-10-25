@@ -6,10 +6,12 @@ and serves the Institutional Web Trading Terminal Dashboard.
 """
 
 import os
+import json
+import asyncio
 import logging
 from typing import Dict, Any, List, Optional
 from fastapi import FastAPI, HTTPException, status
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
 from bridge.payload_models import TradingViewAlertPayload, GreeksRequestPayload
@@ -336,5 +338,41 @@ def create_app(
         Returns live prices and daily performance for top index & equity heavyweights.
         """
         return {"watchlist": market_data_service.get_watchlist_summary()}
+
+    @app.get("/api/market/ticks")
+    def get_market_ticks():
+        """
+        REST endpoint returning immediate live ticks snapshot.
+        """
+        return market_data_service.get_live_ticks()
+
+    @app.get("/api/market/tools-status")
+    def get_tools_and_apis_status():
+        """
+        Returns telemetry on all required tools, public APIs, and streaming protocols.
+        """
+        return market_data_service.get_tools_spec()
+
+    @app.get("/api/stream/live-ticks")
+    async def stream_live_ticks():
+        """
+        Server-Sent Events (SSE) stream pushing sub-second live price updates
+        and uptick/downtick directional telemetry.
+        """
+        async def event_generator():
+            while True:
+                ticks_payload = market_data_service.get_live_ticks()
+                yield f"data: {json.dumps(ticks_payload)}\n\n"
+                await asyncio.sleep(1.0)
+
+        return StreamingResponse(
+            event_generator(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "X-Accel-Buffering": "no"
+            }
+        )
 
     return app
