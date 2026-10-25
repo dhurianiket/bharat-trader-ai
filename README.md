@@ -104,6 +104,7 @@ flowchart TD
 
 | Capability | Engine Module | Description | Performance / Spec |
 | :--- | :--- | :--- | :--- |
+| **Google Finance Live Intelligence** | [`analytics/market_data.py`](file:///c:/Users/dhuri/Downloads/antigravity%20ai%20workspace/trading%20ai%20agent/analytics/market_data.py) | Real-time fundamentals, 52W range, P/E, EPS, market cap & interactive OHLCV charts. | 100% Free Open APIs (zero API keys required) |
 | **TradingView Webhooks** | [`bridge/webhook_server.py`](file:///c:/Users/dhuri/Downloads/antigravity%20ai%20workspace/trading%20ai%20agent/bridge/webhook_server.py) | High-throughput asynchronous listener accepting JSON alerts. | Sub-millisecond parsing, HMAC authentication |
 | **Black-76 Greeks & IV** | [`analytics/black76_greeks.py`](file:///c:/Users/dhuri/Downloads/antigravity%20ai%20workspace/trading%20ai%20agent/analytics/black76_greeks.py) | Pure-math option pricing for Indian F&O (Delta, Gamma, Vega, Theta, Rho). | Zero external C-dependencies, Bisection IV solver |
 | **Max Pain & PCR** | [`analytics/max_pain.py`](file:///c:/Users/dhuri/Downloads/antigravity%20ai%20workspace/trading%20ai%20agent/analytics/max_pain.py) | Pinpoints strike where option buyers experience maximum financial pain. | Computes PCR, Put/Call OI and market sentiment |
@@ -240,6 +241,10 @@ In TradingView's **Pine Editor**, paste either of the provided production strate
 | `POST` | `/action-center/approve/{id}` | Approves and executes a pending order from the Action Center. | `?secret_key=YOUR_SECRET` |
 | `POST` | `/analytics/greeks` | Computes Black-76 Greeks & solves Implied Volatility (IV). | `{"option_type": "CE", "forward_price": 24500, "strike_price": 24500, ...}` |
 | `POST` | `/analytics/max-pain` | Computes option chain Max Pain strike and Put-Call Ratio (PCR). | `[{"strike": 24400, "ce_oi": 50000, "pe_oi": 90000}, ...]` |
+| `GET` | `/api/market/company/{symbol}` | **Google Finance Intelligence**: Real-time fundamentals, 52W range, P/E, EPS, market cap. | `GET /api/market/company/TCS` |
+| `GET` | `/api/market/history/{symbol}` | Time-series OHLCV candlestick/sparkline bars (1d, 5d, 1mo, 6mo, 1y, 5y). | `?period=1mo&interval=1d` |
+| `GET` | `/api/market/search` | Instant symbol and company autocomplete across Indian & Global markets. | `?q=Tata` |
+| `GET` | `/api/market/watchlist` | Curated live prices and daily performance across major Indian & US assets. | None |
 
 ---
 

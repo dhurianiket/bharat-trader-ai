@@ -20,6 +20,7 @@ from core.session_manager import IndianMarketSessionManager
 from brain.composite_scorer import CompositeScorer
 from analytics.black76_greeks import black76_greeks, calculate_implied_volatility
 from analytics.max_pain import calculate_max_pain
+from analytics.market_data import MarketDataService
 
 logger = logging.getLogger("Bridge.WebhookServer")
 
@@ -300,5 +301,40 @@ def create_app(
     @app.post("/analytics/max-pain")
     def get_max_pain(strikes_data: List[Dict[str, Any]]):
         return calculate_max_pain(strikes_data)
+
+    # -------------------------------------------------------------
+    # GOOGLE FINANCE-GRADE MARKET INTELLIGENCE (FREE OPEN APIS)
+    # -------------------------------------------------------------
+    market_data_service = MarketDataService(cache_ttl_seconds=60)
+
+    @app.get("/api/market/company/{symbol}")
+    def get_company_analysis(symbol: str):
+        """
+        Returns full Google Finance-style fundamentals, technical metrics,
+        and company intelligence for any Indian or Global asset.
+        """
+        return market_data_service.get_company_profile(symbol)
+
+    @app.get("/api/market/history/{symbol}")
+    def get_company_historical_bars(symbol: str, period: str = "1mo", interval: str = "1d"):
+        """
+        Returns historical OHLCV candles/bars for charting across timeframes
+        (1d, 5d, 1mo, 6mo, 1y, 5y).
+        """
+        return market_data_service.get_historical_ohlcv(symbol, period=period, interval=interval)
+
+    @app.get("/api/market/search")
+    def search_market_symbols(q: str = ""):
+        """
+        Searches symbols across NSE, BSE, and global exchanges using open autocomplete.
+        """
+        return {"query": q, "results": market_data_service.search_symbols(q)}
+
+    @app.get("/api/market/watchlist")
+    def get_live_market_watchlist():
+        """
+        Returns live prices and daily performance for top index & equity heavyweights.
+        """
+        return {"watchlist": market_data_service.get_watchlist_summary()}
 
     return app

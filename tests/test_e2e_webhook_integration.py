@@ -237,3 +237,40 @@ def test_kill_switch_liquidation(test_setup):
 
     # All positions must now be zero
     assert len(broker.get_positions()) == 0
+
+
+def test_market_data_endpoints(test_setup):
+    """Verifies free Google Finance-grade company analysis and search endpoints."""
+    client = test_setup["client"]
+
+    # 1. Company Profile
+    resp = client.get("/api/market/company/TCS")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "current_price" in data
+    assert "company_name" in data
+    assert "pe_ratio" in data
+    assert "market_cap" in data
+    assert data["current_price"] > 0
+
+    # 2. Symbol Search
+    search_resp = client.get("/api/market/search?q=Tata")
+    assert search_resp.status_code == 200
+    search_data = search_resp.json()
+    assert "results" in search_data
+    assert len(search_data["results"]) > 0
+
+    # 3. Historical Bars
+    hist_resp = client.get("/api/market/history/TCS?period=5d&interval=1d")
+    assert hist_resp.status_code == 200
+    hist_data = hist_resp.json()
+    assert "bars" in hist_data
+    assert len(hist_data["bars"]) > 0
+
+    # 4. Watchlist
+    watch_resp = client.get("/api/market/watchlist")
+    assert watch_resp.status_code == 200
+    watch_data = watch_resp.json()
+    assert "watchlist" in watch_data
+    assert len(watch_data["watchlist"]) > 0
+

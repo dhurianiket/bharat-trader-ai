@@ -284,6 +284,261 @@
     </div>
 
     <!-- ========================================================================= -->
+    <!-- 2.5 GOOGLE FINANCE MARKET INTELLIGENCE (FREE OPEN APIS)                    -->
+    <!-- ========================================================================= -->
+    <div class="hairline-card rounded-2xl p-6 space-y-6">
+      
+      <!-- HEADER & SEARCH BAR -->
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-white/[0.08] pb-5">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-500/20 to-emerald-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 shadow-lg shadow-blue-500/10">
+            <i data-lucide="line-chart" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-base font-bold text-white font-display">Google Finance Live Intelligence</h2>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">FREE PUBLIC APIS</span>
+            </div>
+            <p class="text-xs text-slate-400">Institutional fundamentals, live price discovery & OHLCV history for all Indian & global assets</p>
+          </div>
+        </div>
+
+        <!-- SEARCH INPUT WITH LIVE AUTOCOMPLETE -->
+        <div class="relative w-full md:w-80">
+          <div class="relative">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+            <input 
+              type="text" 
+              id="companySearchInput" 
+              oninput="handleSymbolSearch(this.value)" 
+              placeholder="Search companies (e.g. Tata, Reliance, Apple, NVDA)..." 
+              class="w-full bg-[#0a0d14] border border-white/[0.1] rounded-xl pl-9 pr-8 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-blue-500 transition shadow-inner font-sans"
+              autocomplete="off"
+            />
+            <button onclick="clearSearchInput()" id="clearSearchBtn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Autocomplete Dropdown Menu -->
+          <div id="searchDropdown" class="absolute left-0 right-0 top-full mt-1.5 bg-[#0e121c] border border-white/[0.12] rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto hidden divide-y divide-white/[0.04]">
+            <!-- Results injected dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- CURATED TOP MOVERS & WATCHLIST PILLS -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar" id="watchlistPillsContainer">
+        <!-- Watchlist pills loaded dynamically -->
+      </div>
+
+      <!-- MAIN COMPANY ANALYSIS CONTAINER -->
+      <div id="companyAnalysisView" class="space-y-6">
+
+        <!-- COMPANY HEADER: PRICE, CHANGE & TIMEFRAME SELECTOR -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white/[0.02] p-5 rounded-2xl border border-white/[0.05]">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2.5">
+              <h3 class="text-xl sm:text-2xl font-extrabold text-white font-display tracking-tight" id="gfCompanyName">Tata Consultancy Services Limited</h3>
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-white/[0.06] text-slate-300 border border-white/[0.1]" id="gfTickerBadge">TCS • NSE</span>
+              <span class="text-xs text-slate-400" id="gfSectorPill">Technology</span>
+            </div>
+
+            <div class="flex items-baseline gap-3 pt-1">
+              <div class="text-3xl sm:text-4xl font-extrabold text-white font-mono tabular-nums tracking-tight" id="gfCurrentPrice">₹ 2,530.00</div>
+              <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold font-mono" id="gfPriceChangeBadge">
+                <span id="gfChangeIcon">▲</span>
+                <span id="gfPriceChange">+65.00 (+2.64%)</span>
+                <span class="text-[10px] text-slate-400 font-sans font-normal ml-1">Today</span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 text-[11px] text-slate-400 font-mono pt-0.5">
+              <span id="gfCurrencyExchange">INR (₹) • National Stock Exchange of India</span>
+              <span>•</span>
+              <span id="gfUpdatedTime" class="text-slate-400">Real-time Open Feed</span>
+            </div>
+          </div>
+
+          <!-- Action & Timeframe Switcher -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <!-- Timeframe selector -->
+            <div class="flex items-center bg-[#0a0d14] p-1 rounded-xl border border-white/[0.08] text-xs font-mono font-semibold" id="timeframeButtons">
+              <button onclick="changeTimeframe('1d', '5m', this)" class="tf-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition">1D</button>
+              <button onclick="changeTimeframe('5d', '15m', this)" class="tf-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition">5D</button>
+              <button onclick="changeTimeframe('1mo', '1d', this)" class="tf-btn px-2.5 py-1 rounded-lg bg-white/[0.1] text-emerald-400 border border-emerald-500/30 font-bold transition">1M</button>
+              <button onclick="changeTimeframe('6mo', '1d', this)" class="tf-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition">6M</button>
+              <button onclick="changeTimeframe('1y', '1wk', this)" class="tf-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition">1Y</button>
+              <button onclick="changeTimeframe('5y', '1mo', this)" class="tf-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition">5Y</button>
+            </div>
+
+            <!-- Send to Order Ticket Button -->
+            <button onclick="tradeActiveCompany()" class="spring-btn py-2 px-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-blue-600/20 whitespace-nowrap">
+              <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+              Trade This Stock
+            </button>
+          </div>
+        </div>
+
+        <!-- INTERACTIVE CHART & RANGE SLIDERS -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- CHART CANVAS (8 Cols) -->
+          <div class="lg:col-span-8 bg-[#0a0d14]/70 rounded-2xl p-4 border border-white/[0.06] relative flex flex-col justify-between">
+            <!-- Chart Tooltip -->
+            <div id="chartTooltip" class="absolute top-4 left-4 bg-[#141926]/90 border border-white/[0.1] backdrop-blur-md px-3 py-1.5 rounded-xl text-xs font-mono pointer-events-none transition-opacity duration-150 opacity-0 z-10 shadow-xl">
+              <div class="text-slate-400 text-[10px]" id="tooltipDate">--</div>
+              <div class="text-white font-bold tabular-nums text-sm" id="tooltipPrice">₹ 0.00</div>
+            </div>
+
+            <!-- Interactive SVG Line & Gradient -->
+            <div class="w-full h-56 relative cursor-crosshair" id="svgChartWrapper" onmousemove="handleChartHover(event)" onmouseleave="hideChartTooltip()">
+              <svg id="interactiveSvgChart" class="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 600 180">
+                <defs>
+                  <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#10b981" stop-opacity="0.28" id="gradStop1"></stop>
+                    <stop offset="100%" stop-color="#10b981" stop-opacity="0.0" id="gradStop2"></stop>
+                  </linearGradient>
+                </defs>
+                <polygon id="chartArea" points="" fill="url(#chartGradient)"></polygon>
+                <path id="chartLine" d="" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <!-- Crosshair elements -->
+                <line id="crosshairX" x1="0" y1="0" x2="0" y2="180" stroke="rgba(255,255,255,0.2)" stroke-dasharray="3,3" class="hidden"></line>
+                <circle id="crosshairDot" cx="0" cy="0" r="4.5" fill="#10b981" stroke="#ffffff" stroke-width="2" class="hidden"></circle>
+              </svg>
+            </div>
+
+            <!-- Chart Footer Timeline -->
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 border-t border-white/[0.04] pt-2 mt-2">
+              <span id="chartStartDate">Start</span>
+              <span class="text-slate-400 text-[10px]">Move mouse across chart to inspect historical price points</span>
+              <span id="chartEndDate">Latest</span>
+            </div>
+          </div>
+
+          <!-- RANGE SLIDERS & HIGH/LOW BARS (4 Cols) -->
+          <div class="lg:col-span-4 space-y-4 flex flex-col justify-between">
+            
+            <!-- Day's Range Card -->
+            <div class="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-4 space-y-2.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-400 font-medium">Day's Range</span>
+                <span class="font-mono text-slate-300 text-[11px]" id="dayRangePct">--</span>
+              </div>
+              <div class="flex items-center justify-between font-mono text-xs tabular-nums">
+                <span class="text-slate-300 font-bold" id="gfDayLow">₹ 0.00</span>
+                <span class="text-slate-300 font-bold" id="gfDayHigh">₹ 0.00</span>
+              </div>
+              <!-- Range Bar Track -->
+              <div class="w-full bg-white/[0.08] h-2 rounded-full relative overflow-hidden">
+                <div class="h-2 rounded-full bg-gradient-to-r from-emerald-500 to-blue-500 transition-all duration-300" id="dayRangeProgress" style="width: 50%;"></div>
+              </div>
+              <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                <span>Day Low</span>
+                <span>Day High</span>
+              </div>
+            </div>
+
+            <!-- 52-Week Range Card -->
+            <div class="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-4 space-y-2.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-400 font-medium">52-Week Range</span>
+                <span class="font-mono text-slate-300 text-[11px]" id="yearRangePct">--</span>
+              </div>
+              <div class="flex items-center justify-between font-mono text-xs tabular-nums">
+                <span class="text-slate-300 font-bold" id="gfYearLow">₹ 0.00</span>
+                <span class="text-slate-300 font-bold" id="gfYearHigh">₹ 0.00</span>
+              </div>
+              <!-- 52W Bar Track -->
+              <div class="w-full bg-white/[0.08] h-2 rounded-full relative overflow-hidden">
+                <div class="h-2 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-300" id="yearRangeProgress" style="width: 50%;"></div>
+              </div>
+              <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                <span>52W Low</span>
+                <span>52W High</span>
+              </div>
+            </div>
+
+            <!-- Analyst Consensus Card -->
+            <div class="bg-white/[0.02] border border-white/[0.06] rounded-2xl p-4 flex items-center justify-between">
+              <div>
+                <span class="text-xs text-slate-400 font-medium block">Analyst Consensus</span>
+                <div class="text-sm font-bold text-emerald-400 font-mono mt-0.5" id="gfConsensus">BUY</div>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-slate-400 font-medium block">Target Price</span>
+                <div class="text-sm font-bold text-white font-mono tabular-nums mt-0.5" id="gfTargetPrice">₹ 2,850.00</div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- GOOGLE FINANCE 8-STATISTICAL METRIC GRID -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+          
+          <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+            <span class="text-[10px] text-slate-400 uppercase font-medium block">Market Cap</span>
+            <div class="text-sm font-bold font-mono text-white mt-1 tabular-nums truncate" id="gfStatMarketCap">--</div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+            <span class="text-[10px] text-slate-400 uppercase font-medium block">P/E Ratio</span>
+            <div class="text-sm font-bold font-mono text-emerald-400 mt-1 tabular-nums" id="gfStatPe">--</div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+            <span class="text-[10px] text-slate-400 uppercase font-medium block">Div Yield</span>
+            <div class="text-sm font-bold font-mono text-blue-400 mt-1 tabular-nums" id="gfStatDivYield">--</div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+            <span class="text-[10px] text-slate-400 uppercase font-medium block">52-Wk High</span>
+            <div class="text-sm font-bold font-mono text-white mt-1 tabular-nums" id="gfStat52High">--</div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+            <span class="text-[10px] text-slate-400 uppercase font-medium block">52-Wk Low</span>
+            <div class="text-sm font-bold font-mono text-white mt-1 tabular-nums" id="gfStat52Low">--</div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+            <span class="text-[10px] text-slate-400 uppercase font-medium block">Volume</span>
+            <div class="text-sm font-bold font-mono text-slate-200 mt-1 tabular-nums" id="gfStatVolume">--</div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+            <span class="text-[10px] text-slate-400 uppercase font-medium block">Avg Volume</span>
+            <div class="text-sm font-bold font-mono text-slate-300 mt-1 tabular-nums" id="gfStatAvgVolume">--</div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
+            <span class="text-[10px] text-slate-400 uppercase font-medium block">Beta (Vol)</span>
+            <div class="text-sm font-bold font-mono text-purple-400 mt-1 tabular-nums" id="gfStatBeta">--</div>
+          </div>
+
+        </div>
+
+        <!-- ABOUT COMPANY SUMMARY -->
+        <details class="bg-white/[0.02] border border-white/[0.06] rounded-xl p-3.5 text-xs text-slate-300 transition">
+          <summary class="font-semibold text-white cursor-pointer select-none flex items-center justify-between">
+            <span class="flex items-center gap-2">
+              <i data-lucide="info" class="w-3.5 h-3.5 text-blue-400"></i>
+              About <span id="gfAboutTitle">Tata Consultancy Services Limited</span>
+            </span>
+            <span class="text-[10px] font-mono text-slate-400">Click to expand overview</span>
+          </summary>
+          <p class="mt-2 text-slate-400 text-xs leading-relaxed" id="gfDescription">
+            Tata Consultancy Services is an Indian multinational information technology services and consulting company headquartered in Mumbai. It is a part of the Tata Group and operates in 150 locations across 46 countries.
+          </p>
+        </details>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
     <!-- 3. INTERACTIVE TERMINAL: ORDER TICKET + ACTIVE POSITIONS                   -->
     <!-- ========================================================================= -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -796,6 +1051,301 @@
       navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
       alert("✅ Pine Script Alert JSON copied to clipboard!");
     }
+
+    // =========================================================================
+    // GOOGLE FINANCE LIVE MARKET INTELLIGENCE SCRIPT
+    // =========================================================================
+    let currentAnalyzedSymbol = "TCS.NS";
+    let currentAnalyzedPrice = 2530.00;
+    let currentCurrencySymbol = "₹";
+    let currentPeriod = "1mo";
+    let currentInterval = "1d";
+    let activeChartBars = [];
+    let searchDebounceTimer = null;
+
+    function handleSymbolSearch(val) {
+      const clearBtn = document.getElementById("clearSearchBtn");
+      const dropdown = document.getElementById("searchDropdown");
+      
+      if (!val || val.trim().length === 0) {
+        clearBtn.classList.add("hidden");
+        dropdown.classList.add("hidden");
+        return;
+      }
+      clearBtn.classList.remove("hidden");
+
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(async () => {
+        try {
+          const res = await fetch(`/api/market/search?q=${encodeURIComponent(val.trim())}`);
+          const data = await res.json();
+          renderSearchDropdown(data.results || []);
+        } catch (err) {
+          console.error("Search failed:", err);
+        }
+      }, 250);
+    }
+
+    function clearSearchInput() {
+      const inp = document.getElementById("companySearchInput");
+      inp.value = "";
+      document.getElementById("clearSearchBtn").classList.add("hidden");
+      document.getElementById("searchDropdown").classList.add("hidden");
+    }
+
+    function renderSearchDropdown(results) {
+      const dropdown = document.getElementById("searchDropdown");
+      if (!results || results.length === 0) {
+        dropdown.innerHTML = `<div class="p-3 text-center text-slate-500 text-xs">No matching securities found.</div>`;
+        dropdown.classList.remove("hidden");
+        return;
+      }
+
+      dropdown.innerHTML = results.map(r => `
+        <div onclick="selectCompany('${r.symbol}')" class="p-2.5 hover:bg-white/[0.06] cursor-pointer transition flex items-center justify-between group">
+          <div>
+            <div class="font-bold text-white text-xs group-hover:text-blue-400 transition">${r.name}</div>
+            <div class="text-[11px] font-mono text-slate-400">${r.symbol} • ${r.exchange || 'NSE'}</div>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/[0.04] text-slate-400 group-hover:bg-blue-500/20 group-hover:text-blue-300">${r.type || 'EQUITY'}</span>
+        </div>
+      `).join("");
+      dropdown.classList.remove("hidden");
+    }
+
+    function selectCompany(symbol) {
+      currentAnalyzedSymbol = symbol;
+      document.getElementById("searchDropdown").classList.add("hidden");
+      document.getElementById("companySearchInput").value = symbol;
+      loadCompanyProfile(symbol);
+      loadHistoricalChart(symbol, currentPeriod, currentInterval);
+    }
+
+    async function loadCompanyProfile(symbol) {
+      try {
+        const res = await fetch(`/api/market/company/${encodeURIComponent(symbol)}`);
+        const data = await res.json();
+
+        currentAnalyzedPrice = data.current_price;
+        currentCurrencySymbol = data.currency_symbol || "₹";
+
+        // Company Header
+        document.getElementById("gfCompanyName").innerText = data.company_name;
+        document.getElementById("gfTickerBadge").innerText = `${data.display_symbol} • ${data.exchange}`;
+        document.getElementById("gfSectorPill").innerText = data.sector || "Equities";
+        document.getElementById("gfCurrentPrice").innerText = `${currentCurrencySymbol} ${data.current_price.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+        
+        // Price Change Pill
+        const changeBadge = document.getElementById("gfPriceChangeBadge");
+        const changeIcon = document.getElementById("gfChangeIcon");
+        const priceChange = document.getElementById("gfPriceChange");
+        const sign = data.change >= 0 ? "+" : "";
+        
+        priceChange.innerText = `${sign}${data.change.toFixed(2)} (${sign}${data.change_percent.toFixed(2)}%)`;
+        changeIcon.innerText = data.change >= 0 ? "▲" : "▼";
+
+        if (data.change >= 0) {
+          changeBadge.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold font-mono bg-emerald-500/15 text-emerald-400 border border-emerald-500/25";
+        } else {
+          changeBadge.className = "flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold font-mono bg-rose-500/15 text-rose-400 border border-rose-500/25";
+        }
+
+        document.getElementById("gfCurrencyExchange").innerText = `${data.currency} (${currentCurrencySymbol}) • ${data.exchange}`;
+        document.getElementById("gfUpdatedTime").innerText = `Updated ${data.updated_at}`;
+
+        // Range Sliders
+        document.getElementById("gfDayLow").innerText = `${currentCurrencySymbol} ${data.day_low.toFixed(2)}`;
+        document.getElementById("gfDayHigh").innerText = `${currentCurrencySymbol} ${data.day_high.toFixed(2)}`;
+        
+        const daySpan = data.day_high - data.day_low;
+        const dayPct = daySpan > 0 ? Math.max(5, Math.min(95, ((data.current_price - data.day_low) / daySpan) * 100)) : 50;
+        document.getElementById("dayRangeProgress").style.width = `${dayPct}%`;
+        document.getElementById("dayRangePct").innerText = `${dayPct.toFixed(0)}% of range`;
+
+        document.getElementById("gfYearLow").innerText = `${currentCurrencySymbol} ${data.year_low.toFixed(2)}`;
+        document.getElementById("gfYearHigh").innerText = `${currentCurrencySymbol} ${data.year_high.toFixed(2)}`;
+        
+        const yearSpan = data.year_high - data.year_low;
+        const yearPct = yearSpan > 0 ? Math.max(5, Math.min(95, ((data.current_price - data.year_low) / yearSpan) * 100)) : 50;
+        document.getElementById("yearRangeProgress").style.width = `${yearPct}%`;
+        document.getElementById("yearRangePct").innerText = `${yearPct.toFixed(0)}% of 52W`;
+
+        // Consensus & Target
+        document.getElementById("gfConsensus").innerText = data.recommendation || "BUY";
+        document.getElementById("gfTargetPrice").innerText = data.target_mean_price ? `${currentCurrencySymbol} ${Number(data.target_mean_price).toFixed(2)}` : "N/A";
+
+        // 8 Key Statistics
+        document.getElementById("gfStatMarketCap").innerText = data.market_cap || "N/A";
+        document.getElementById("gfStatPe").innerText = data.pe_ratio ? data.pe_ratio.toFixed(2) : "N/A";
+        document.getElementById("gfStatDivYield").innerText = data.dividend_yield ? `${data.dividend_yield.toFixed(2)}%` : "0.00%";
+        document.getElementById("gfStat52High").innerText = `${currentCurrencySymbol} ${data.year_high.toFixed(2)}`;
+        document.getElementById("gfStat52Low").innerText = `${currentCurrencySymbol} ${data.year_low.toFixed(2)}`;
+        document.getElementById("gfStatVolume").innerText = formatCompactNumber(data.volume);
+        document.getElementById("gfStatAvgVolume").innerText = formatCompactNumber(data.avg_volume);
+        document.getElementById("gfStatBeta").innerText = data.beta ? data.beta.toFixed(2) : "1.00";
+
+        // Description
+        document.getElementById("gfAboutTitle").innerText = data.company_name;
+        document.getElementById("gfDescription").innerText = data.description || "Leading global corporation.";
+
+        lucide.createIcons();
+      } catch (err) {
+        console.error("Error loading profile:", err);
+      }
+    }
+
+    function formatCompactNumber(num) {
+      if (!num || num <= 0) return "N/A";
+      if (num >= 1e7) return (num / 1e7).toFixed(2) + " Cr";
+      if (num >= 1e6) return (num / 1e6).toFixed(2) + " M";
+      if (num >= 1e3) return (num / 1e3).toFixed(1) + " k";
+      return num.toLocaleString();
+    }
+
+    function changeTimeframe(period, interval, btn) {
+      document.querySelectorAll(".tf-btn").forEach(b => {
+        b.className = "tf-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition";
+      });
+      btn.className = "tf-btn px-2.5 py-1 rounded-lg bg-white/[0.1] text-emerald-400 border border-emerald-500/30 font-bold transition";
+      currentPeriod = period;
+      currentInterval = interval;
+      loadHistoricalChart(currentAnalyzedSymbol, period, interval);
+    }
+
+    async function loadHistoricalChart(symbol, period, interval) {
+      try {
+        const res = await fetch(`/api/market/history/${encodeURIComponent(symbol)}?period=${period}&interval=${interval}`);
+        const data = await res.json();
+        activeChartBars = data.bars || [];
+        renderInteractiveSvgChart(activeChartBars);
+      } catch (err) {
+        console.error("Error loading historical chart:", err);
+      }
+    }
+
+    function renderInteractiveSvgChart(bars) {
+      if (!bars || bars.length === 0) return;
+
+      const closes = bars.map(b => b.close);
+      const min = Math.min(...closes);
+      const max = Math.max(...closes);
+      const range = max - min || 1;
+      const isPositive = closes[closes.length - 1] >= closes[0];
+
+      const width = 600;
+      const height = 180;
+      const padding = 15;
+
+      const points = bars.map((b, i) => {
+        const x = (i / (bars.length - 1)) * width;
+        const y = height - padding - ((b.close - min) / range) * (height - 2 * padding);
+        return { x, y, time: b.time, close: b.close };
+      });
+
+      // Build Path & Polygon
+      const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
+      const polygonPoints = `${pathD} L ${width} ${height} L 0 ${height} Z`;
+
+      const chartLine = document.getElementById("chartLine");
+      const chartArea = document.getElementById("chartArea");
+      const stop1 = document.getElementById("gradStop1");
+      const stop2 = document.getElementById("gradStop2");
+      const crossDot = document.getElementById("crosshairDot");
+
+      chartLine.setAttribute("d", pathD);
+      chartArea.setAttribute("points", polygonPoints);
+
+      const color = isPositive ? "#10b981" : "#f43f5e";
+      chartLine.setAttribute("stroke", color);
+      stop1.setAttribute("stop-color", color);
+      stop2.setAttribute("stop-color", color);
+      crossDot.setAttribute("fill", color);
+
+      // Timeline labels
+      document.getElementById("chartStartDate").innerText = bars[0].time;
+      document.getElementById("chartEndDate").innerText = bars[bars.length - 1].time;
+    }
+
+    function handleChartHover(e) {
+      if (!activeChartBars || activeChartBars.length === 0) return;
+
+      const wrapper = document.getElementById("svgChartWrapper");
+      const rect = wrapper.getBoundingClientRect();
+      const mouseX = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+      const ratio = mouseX / rect.width;
+      const idx = Math.min(activeChartBars.length - 1, Math.max(0, Math.round(ratio * (activeChartBars.length - 1))));
+      const bar = activeChartBars[idx];
+
+      const tooltip = document.getElementById("chartTooltip");
+      const crosshairX = document.getElementById("crosshairX");
+      const crosshairDot = document.getElementById("crosshairDot");
+
+      // Calculate SVG mapped coordinates
+      const svgX = ratio * 600;
+      const closes = activeChartBars.map(b => b.close);
+      const min = Math.min(...closes);
+      const max = Math.max(...closes);
+      const range = max - min || 1;
+      const svgY = 180 - 15 - ((bar.close - min) / range) * (180 - 30);
+
+      crosshairX.setAttribute("x1", svgX);
+      crosshairX.setAttribute("x2", svgX);
+      crosshairX.classList.remove("hidden");
+
+      crosshairDot.setAttribute("cx", svgX);
+      crosshairDot.setAttribute("cy", svgY);
+      crosshairDot.classList.remove("hidden");
+
+      document.getElementById("tooltipDate").innerText = bar.time;
+      document.getElementById("tooltipPrice").innerText = `${currentCurrencySymbol} ${bar.close.toFixed(2)}`;
+      
+      tooltip.style.left = `${Math.min(rect.width - 130, Math.max(10, mouseX - 60))}px`;
+      tooltip.classList.remove("opacity-0");
+    }
+
+    function hideChartTooltip() {
+      document.getElementById("chartTooltip").classList.add("opacity-0");
+      document.getElementById("crosshairX").classList.add("hidden");
+      document.getElementById("crosshairDot").classList.add("hidden");
+    }
+
+    async function loadWatchlistPills() {
+      try {
+        const res = await fetch("/api/market/watchlist");
+        const data = await res.json();
+        const container = document.getElementById("watchlistPillsContainer");
+        const list = data.watchlist || [];
+
+        if (list.length === 0) return;
+
+        container.innerHTML = list.map(item => `
+          <button onclick="selectCompany('${item.symbol}')" class="spring-btn shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.06] transition group">
+            <span class="font-bold text-white group-hover:text-blue-400 font-mono text-[11px]">${item.display_symbol}</span>
+            <span class="font-mono text-slate-300 tabular-nums text-[11px]">${item.currency_symbol}${item.price.toFixed(1)}</span>
+            <span class="text-[10px] font-mono font-bold ${item.is_positive ? 'text-emerald-400' : 'text-rose-400'}">${item.is_positive ? '+' : ''}${item.change_percent.toFixed(1)}%</span>
+          </button>
+        `).join("");
+      } catch (err) {
+        console.error("Watchlist fetch error:", err);
+      }
+    }
+
+    function tradeActiveCompany() {
+      const cleanSym = currentAnalyzedSymbol.replace(".NS", "").replace("^", "");
+      document.getElementById("targetSymbol").value = cleanSym;
+      document.getElementById("orderPrice").value = currentAnalyzedPrice.toFixed(2);
+      document.getElementById("contractType").value = "EQUITY";
+      
+      logTerminal(`Loaded ${cleanSym} (@ ${currentCurrencySymbol}${currentAnalyzedPrice.toFixed(2)}) into Instant Order Ticket.`, "success");
+      
+      // Smooth scroll to order ticket
+      document.getElementById("orderForm").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    // Initialize Google Finance View on page load
+    loadCompanyProfile("TCS.NS");
+    loadHistoricalChart("TCS.NS", "1mo", "1d");
+    loadWatchlistPills();
 
     // Auto Refresh every 2 seconds
     fetchHealthAndPositions();
