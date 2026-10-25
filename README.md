@@ -1,196 +1,252 @@
 # BharatTrader-AI 🇮🇳
 ### Autonomous Unified Algorithmic & AI Live Trading Engine for Indian Markets (NSE / BSE / F&O)
 
-BharatTrader-AI is a unified, production-grade algorithmic trading repository synthesizing the best architectural designs, quantitative analytics, and AI reasoning engines from leading open-source Indian trading ecosystems:
-- **`openalgo`**: Normalized multi-broker REST API, TradingView/ChartInk webhook receiver, and Action Center.
-- **`fenix`**: Standardized multi-broker adapters (Zerodha Kite, Dhan, Angel One, Upstox, Fyers).
+BharatTrader-AI is a production-grade algorithmic and AI trading engine built specifically for the Indian financial markets. It synthesizes the best capabilities of top open-source quantitative and multi-broker repositories:
+- **`openalgo`**: Standardized REST API, TradingView/ChartInk webhook listeners, and Action Center.
+- **`fenix`**: Multi-broker Python adapters (**Zerodha Kite, Dhan, Angel One, Upstox, Fyers**).
 - **`openbull`**: Pure-math Black-76 Options Greeks (Delta, Gamma, Vega, Theta, Rho, bisection IV solver), and Max Pain calculation.
-- **`AI-trader`**: 5-Regime Market Classifier (`TRENDING_BULL`, `TRENDING_BEAR`, `SIDEWAYS`, `HIGH_VOLATILITY`, `LOW_VOLATILITY`), Tabular Q-Learning Reinforcement Learning Exit Agent (`RLExitAgent`), and composite multi-factor scoring.
+- **`AI-trader`**: 5-Regime Market Classifier (`TRENDING_BULL`, `TRENDING_BEAR`, `SIDEWAYS`, `HIGH_VOLATILITY`, `LOW_VOLATILITY`), Tabular Q-Learning Reinforcement Learning Exit Agent (`RLExitAgent`), and multi-factor scoring.
 - **`Agentic-Trader`**: Multi-agent LLM reasoning sentinel (Groq, Cerebras, OpenAI, Ollama).
 - **`warrenduffer`**: Strict Asian/Kolkata (IST) market clock lifecycle, 15:15 IST mandatory intraday auto-square-off, and circuit breaker risk halts.
 
 ---
 
-## 🏛️ System Architecture
+## 📖 How It Works: Complete End-to-End Pipeline
+
+The engine operates on a decoupled **5-Stage Pipeline** to ensure millisecond execution speed while maintaining institutional risk guardrails and intelligent AI confirmation:
 
 ```mermaid
-flowchart TD
-    subgraph TriggerLayer["1. Signal Ingestion & Alerts"]
-        TV["TradingView Cloud<br/>Pine Script Strategy Alert"]
-        Manual["Action Center Web UI / REST"]
-        Scanner["Intraday Market Scanner"]
-    end
+sequenceDiagram
+    autonumber
+    actor TV as TradingView Cloud / Pine Script
+    participant Bridge as FastAPI Server (:8000/webhook)
+    participant Session as IST Session Manager
+    participant Brain as AI Brain & Sentinel
+    participant Risk as SEBI Risk Engine
+    participant Action as Action Center
+    participant Broker as Unified Broker Adapter (Zerodha/Dhan/Angel)
+    participant Exchange as NSE / BSE Exchange Gateway
 
-    subgraph BridgeLayer["2. Webhook Bridge & Session Gate"]
-        WH["FastAPI Server (:8000/webhook)"]
-        AUTH["HMAC Secret Key & 2FA Validation"]
-        CLOCK["Session Manager (IST 09:15-15:30)"]
-    end
-
-    subgraph BrainLayer["3. Quantitative & AI Decision Engine"]
-        REGIME["5-Regime Classifier<br/>(ADX / ATR / EMA)"]
-        TECH["Technical Indicators<br/>(Supertrend / RSI / VWAP)"]
-        FLOW["OI Flow Detector<br/>(Long/Short Buildup)"]
-        SCORE["Composite Scorer<br/>(0.35 Tech + 0.35 Regime + 0.30 Flow)"]
-        RL["Q-Learning RL Exit Agent<br/>(HOLD / EXIT / TIGHTEN)"]
-    end
-
-    subgraph RiskLayer["4. SEBI Regulatory & Risk Engine"]
-        CB["Account Circuit Breaker (Max Daily Loss)"]
-        KELLY["Kelly Criterion Position Sizing"]
-        LIMITS["Max Open Positions & SL Validator"]
-        KILL["Emergency One-Click Kill-Switch"]
-    end
-
-    subgraph BrokerLayer["5. Unified Indian Broker Gateways"]
-        ROUTER["Normalized Broker Adapter"]
-        Kite["Zerodha Kite Connect"]
-        Dhan["DhanHQ REST & Webhook"]
-        Angel["Angel One SmartAPI"]
-        Fyers["Fyers API v3"]
-        Upstox["Upstox API v2"]
-        Paper["Realistic Paper Simulator"]
-    end
-
-    TV --> WH
-    Manual --> WH
-    Scanner --> WH
-
-    WH --> AUTH --> CLOCK
-    CLOCK --> REGIME & TECH & FLOW
-    REGIME & TECH & FLOW --> SCORE
-    SCORE -->|"Approved (Score ≥ 0.65)"| CB
-    SCORE -->|"Vetoed"| REJECT["Alert Discarded / Logged"]
+    TV->>Bridge: HTTP POST JSON Alert Payload + HMAC Secret
+    Bridge->>Bridge: Authenticate Secret Key (401 if invalid)
     
-    CB --> KELLY --> LIMITS --> ROUTER
-    KILL -.->|"Square Off All"| ROUTER
+    Bridge->>Session: Check IST Market Hours (09:15 - 15:00)
+    Session-->>Bridge: Market Session OK
 
-    ROUTER --> Kite & Dhan & Angel & Fyers & Upstox & Paper
-    Paper --> RL
+    Bridge->>Brain: Evaluate Composite Score (Tech + Regime + Flow)
+    Brain-->>Bridge: Score ≥ 0.65 (Approved)
+
+    Bridge->>Risk: Pre-Trade Risk Check (Max Loss, Kelly Sizing, Hard SL)
+    Risk-->>Bridge: Trade Approved, Sized Quantity Calculated
+
+    alt Full-Auto Mode
+        Bridge->>Broker: Route Normalized OrderRequest
+        Broker->>Exchange: Execute Market/Limit Order via Broker SDK
+        Exchange-->>Broker: Order Filled / Executed Price
+        Broker-->>Bridge: OrderResponse (Status: COMPLETE)
+        Bridge-->>TV: 200 OK {"status": "EXECUTED"}
+    else Semi-Auto Mode (Action Center)
+        Bridge->>Action: Enqueue Order with Queue ID
+        Action-->>Bridge: Order Pending User Approval
+        Bridge-->>TV: 200 OK {"status": "QUEUED_FOR_APPROVAL"}
+    end
+```
+
+### Detailed Component Functions:
+
+1. **The Ingestion Bridge (`bridge/webhook_server.py`)**:
+   - Listens on `http://0.0.0.0:8000/webhook`.
+   - Validates the incoming `secret_key` against `config/config.yaml`.
+   - Protects your system from unauthorized or spoofed webhook alerts.
+
+2. **The Session Manager (`core/session_manager.py`)**:
+   - Enforces Asia/Kolkata (IST) market timing.
+   - **09:15 IST**: Market opens for fresh entries.
+   - **15:00 IST**: Fresh entry cutoff (no new intraday trades allowed).
+   - **15:15 IST**: Mandatory automated square-off for all MIS/intraday positions.
+   - **RFC 6238 TOTP**: Automatically generates 6-digit 2FA codes for headless broker logins.
+
+3. **The AI Brain & Sentinel (`brain/`)**:
+   - **Market Regime Classifier (`regime_detector.py`)**: Continuously categorizes the market into `TRENDING_BULL`, `TRENDING_BEAR`, `SIDEWAYS`, `HIGH_VOLATILITY`, or `LOW_VOLATILITY`.
+   - **Composite Scorer (`composite_scorer.py`)**: Evaluates `0.35 * Technicals + 0.35 * Regime + 0.30 * Flow`. If composite confidence is `< 0.65`, the trade is vetoed to prevent whipsaws.
+   - **Reinforcement Learning Exit Agent (`rl_exit_agent.py`)**: A tabular Q-Learning agent with an 8-feature state vector that decides whether to `HOLD`, `EXIT`, or `TIGHTEN` stop-losses dynamically based on price momentum and unrealized PnL.
+
+4. **The SEBI Regulatory & Risk Engine (`core/risk_engine.py`)**:
+   - **Circuit Breaker**: Halts all trading and trips the kill-switch if cumulative daily loss reaches `max_intraday_loss_inr`.
+   - **Kelly Criterion**: Dynamically sizes orders based on win probability ($p=0.55$) and payoff ratio ($b=1.5$), with a 0.5x Half-Kelly safety factor.
+   - **Hard Stop-Loss**: Rejects buy orders if stop-loss is missing or positioned above entry price.
+   - **Kill-Switch**: One-click endpoint (`POST /kill-switch`) that cancels open orders and liquidates all positions immediately.
+
+5. **The Unified Broker Adapter (`core/brokers/`)**:
+   - Seamlessly translates standardized `OrderRequest` models to broker-specific SDKs:
+     - **Zerodha**: `kite.place_order(...)`
+     - **Dhan**: `dhanhq.place_order(...)`
+     - **Angel One**: `smartApi.placeOrder(...)`
+     - **Fyers**: `fyers_model.place_order(...)`
+     - **Upstox**: `order_api.place_order(...)`
+     - **Paper Simulator**: Realistic tick execution with zero real capital risk.
+
+6. **The Quantitative Options Analytics (`analytics/`)**:
+   - **Pure-math Black-76 Greeks (`black76_greeks.py`)**: Calculates Delta, Gamma, Theta, Vega, and Rho without external compiled C-libraries.
+   - **Bisection IV Solver**: Calculates Implied Volatility (IV) with guaranteed mathematical convergence.
+   - **Max Pain & PCR (`max_pain.py`)**: Pinpoints the strike price where option sellers maximize profits, and tracks the Put-Call Ratio for macro sentiment.
+
+---
+
+## 🛠️ Step-by-Step Setup Guide
+
+### 1. Prerequisites
+- **Python 3.12+**
+- **uv package manager** (or standard pip)
+- Git
+
+### 2. Installation
+Clone or navigate to the repository and set up the virtual environment:
+```powershell
+cd "c:\Users\dhuri\Downloads\antigravity ai workspace\trading ai agent"
+
+# Create virtual environment
+uv venv
+.\.venv\Scripts\activate
+
+# Install required dependencies
+uv pip install -r requirements.txt
+```
+
+### 3. Broker Configuration
+Edit `config/config.yaml` to specify your preferred environment and broker:
+
+```yaml
+app:
+  environment: "paper"  # "paper" for simulation, "live" for real exchange execution
+  server_host: "0.0.0.0"
+  server_port: 8000
+  webhook_secret_key: "CHANGE_TO_A_SECURE_RANDOM_SECRET"
+  execution_mode: "full_auto"  # "full_auto" or "semi_auto"
+  enable_ai_sentinel: true
+
+risk:
+  max_intraday_loss_inr: 5000.0        # Daily loss circuit breaker
+  max_capital_per_trade_percent: 5.0   # Max % equity per trade
+  max_open_positions: 3                # Max concurrent positions
+  enforce_hard_stop_loss: true
+
+brokers:
+  active_broker: "zerodha"  # Options: 'zerodha', 'dhan', 'angel_one', 'fyers', 'upstox'
+
+  zerodha:
+    api_key: "YOUR_ZERODHA_API_KEY"
+    api_secret: "YOUR_ZERODHA_API_SECRET"
+    user_id: "YOUR_ZERODHA_USER_ID"
+    totp_secret: "YOUR_BASE32_TOTP_KEY"
+    access_token: "YOUR_DAILY_ACCESS_TOKEN"
+
+  dhan:
+    client_id: "YOUR_DHAN_CLIENT_ID"
+    access_token: "YOUR_DHAN_ACCESS_TOKEN"
+
+  angel_one:
+    api_key: "YOUR_SMARTAPI_KEY"
+    client_code: "YOUR_CLIENT_CODE"
+    password: "YOUR_PIN_OR_PASSWORD"
+    totp_secret: "YOUR_BASE32_TOTP_KEY"
 ```
 
 ---
 
-## 🚀 Quick Start
+## 📡 TradingView Webhook Connection
 
-### 1. Environment Setup
+### 1. Make Your Server Publicly Accessible
+Since TradingView cloud servers send HTTP POST alerts, your local server must be reachable. You can use **Ngrok** or **Cloudflare Tunnels**:
 ```powershell
-# Create virtual environment and install dependencies
-uv venv
-.\.venv\Scripts\activate
-uv pip install -r requirements.txt
+# Using ngrok to expose port 8000
+ngrok http 8000
 ```
+This gives you a public URL such as `https://xxxx-xx-xx.ngrok-free.app`.
 
-### 2. Verify Analytics & Risk Engine
-Run the automated test suite covering Greeks, IV solver, Max Pain, Regime Detection, and Risk rules:
+### 2. Add Pine Script Strategy in TradingView
+1. Open [TradingView](https://www.tradingview.com/) and navigate to the **Pine Editor** tab at the bottom.
+2. Paste the contents of [`tradingview/pinescript_options_buyer.pine`](file:///c:/Users/dhuri/Downloads/antigravity%20ai%20workspace/trading%20ai%20agent/tradingview/pinescript_options_buyer.pine) (for automated NIFTY/BANKNIFTY options buying) or [`tradingview/pinescript_strategy_template.pine`](file:///c:/Users/dhuri/Downloads/antigravity%20ai%20workspace/trading%20ai%20agent/tradingview/pinescript_strategy_template.pine).
+3. Click **Add to Chart**.
+4. In the strategy settings, paste your `webhook_secret_key` matching `config/config.yaml`.
+
+### 3. Create the Alert
+1. Click the **Alert** button on TradingView (or `Alt + A`).
+2. Set **Condition** to the added Strategy.
+3. Check **Webhook URL** and enter:
+   ```
+   https://xxxx-xx-xx.ngrok-free.app/webhook
+   ```
+4. Set **Message** to:
+   ```json
+   {
+     "secret_key": "CHANGE_TO_A_SECURE_RANDOM_SECRET",
+     "symbol": "NIFTY24OCT24500CE",
+     "action": "BUY",
+     "quantity": 25,
+     "order_type": "MARKET",
+     "price": 140.0,
+     "stop_loss": 115.0,
+     "take_profit": 190.0,
+     "product": "INTRADAY",
+     "strategy_name": "Supertrend_Options_Buyer"
+   }
+   ```
+5. Click **Create**. Every time your strategy fires a signal, it routes directly to BharatTrader-AI!
+
+---
+
+## 🧪 Automated Testing & Verification
+
+The repository includes a comprehensive, automated test suite:
+
+### 1. Run All Automated Tests in One Command
+```powershell
+.\.venv\Scripts\python.exe scripts/run_automated_tests.py
+```
+This script automatically executes:
+- **Pytest Suite**: 20 comprehensive unit and end-to-end integration tests.
+- **Greeks Diagnostic**: Verifies Black-76 theoretical pricing, Greeks, and IV solver.
+- **Regime Diagnostic**: Verifies trend and volatility classification.
+- **Signal Diagnostic**: Simulates an incoming TradingView signal and verifies broker routing.
+
+### 2. Run Pytest Directly
 ```powershell
 .\.venv\Scripts\python.exe -m pytest tests/ -v
 ```
 
-### 3. Test CLI Diagnostics
+### 3. Individual CLI Diagnostic Flags
 ```powershell
-# 1. Compute Black-76 Greeks & Implied Volatility
+# Test Black-76 Options Greeks & IV
 .\.venv\Scripts\python.exe main.py --test-greeks
 
-# 2. Test Market Regime Detector
+# Test 5-Regime Market Classifier
 .\.venv\Scripts\python.exe main.py --test-regime
 
-# 3. Simulate an End-to-End TradingView Signal Order
+# Simulate a Test Webhook Signal
 .\.venv\Scripts\python.exe main.py --test-signal
 ```
 
-### 4. Start Live Webhook Server
+---
+
+## 🕹️ Action Center (Full-Auto vs Semi-Auto)
+
+In `config/config.yaml`, you can configure the execution mode:
+- **`full_auto`**: Signals from TradingView are validated by the AI Sentinel and Risk Engine, then placed directly on the exchange in milliseconds.
+- **`semi_auto`**: Signals are held in a pending queue in the Action Center. A human trader can review them and approve or reject them via REST endpoints:
+  - List pending trades: `GET /action-center/pending`
+  - Approve a trade: `POST /action-center/approve/{queue_id}?secret_key=YOUR_KEY`
+
+---
+
+## 🚨 Emergency Kill-Switch
+
+If market conditions turn extreme or you want to instantly exit all positions:
 ```powershell
-.\.venv\Scripts\python.exe main.py
+# Send HTTP POST to kill-switch
+curl -X POST "http://localhost:8000/kill-switch?secret_key=YOUR_SECRET_KEY"
 ```
-*Server starts on `http://0.0.0.0:8000/webhook` ready to receive TradingView JSON alerts.*
-
----
-
-## 📈 TradingView Setup
-
-### In TradingView Pine Editor:
-Use the provided tested Pine Script v5 strategy templates:
-1. **`tradingview/pinescript_options_buyer.pine`**: Automated ATM Call/Put options buyer for NIFTY / BANKNIFTY with Supertrend & EMA filters.
-2. **`tradingview/pinescript_strategy_template.pine`**: Generic equity / futures strategy with dynamic ATR-based stop loss and take profit.
-
-### Alert Configuration:
-- **Webhook URL:** `http://YOUR_SERVER_IP:8000/webhook` (or your Ngrok / Cloudflare Tunnel URL)
-- **Message:** Paste the JSON alert payload containing your secret key:
-```json
-{
-  "secret_key": "BHARAT_SECURE_KEY_REPLACE_ME_IN_PROD",
-  "symbol": "NIFTY24OCT24500CE",
-  "action": "BUY",
-  "quantity": 25,
-  "order_type": "MARKET",
-  "price": 145.0,
-  "stop_loss": 120.0,
-  "take_profit": 195.0,
-  "product": "INTRADAY",
-  "strategy_name": "Supertrend_CE_Buyer"
-}
-```
-
----
-
-## 🛡️ SEBI 2025/2026 Compliance Architecture
-
-- **Retail DIY Compliance:** Follows SEBI guidelines permitting retail algorithmic trading for personal accounts (< 10 orders/sec).
-- **Static IP Whitelisting:** Ready for broker console IP binding.
-- **Mandatory RFC 6238 TOTP:** Automated 2FA generation with daily session management.
-- **Circuit Breakers:** Auto kill-switch stops trading if cumulative daily loss exceeds `max_intraday_loss_inr`.
-- **Mandatory 15:15 IST Square-Off:** Automatically closes all open intraday (MIS) positions before cash market close.
-
----
-
-## 📂 Repository Directory Layout
-
-```
-trading ai agent/
-├── analytics/                         # Merged from openbull
-│   ├── black76_greeks.py              # Black-76 Greeks & bisection IV solver
-│   ├── max_pain.py                    # Strike Max Pain & PCR
-│   ├── option_chain.py                # Strike ladder resolver & symbol builder
-│   └── oi_tracker.py                  # Open Interest flow (buildup/unwinding)
-│
-├── brain/                             # Merged from AI-trader & Agentic-Trader
-│   ├── regime_detector.py             # 5-regime market classifier
-│   ├── rl_exit_agent.py               # Q-Learning RL dynamic exit agent
-│   ├── composite_scorer.py            # Multi-factor confidence scoring
-│   └── indicators.py                  # Pure-math Supertrend, EMA, RSI, ATR, VWAP
-│
-├── core/                              # Merged from fenix & warrenduffer
-│   ├── broker_base.py                 # Abstract Normalized Broker Class
-│   ├── risk_engine.py                 # SEBI circuit breaker, Kelly sizing, kill-switch
-│   ├── session_manager.py             # IST clock (09:15-15:30), 15:15 auto-square-off
-│   └── brokers/
-│       ├── __init__.py                # Broker factory
-│       ├── zerodha_adapter.py         # Zerodha Kite Connect
-│       ├── dhan_adapter.py            # DhanHQ REST & Webhook
-│       ├── angel_one_adapter.py       # Angel One SmartAPI
-│       ├── fyers_adapter.py           # Fyers API v3
-│       ├── upstox_adapter.py          # Upstox API v2
-│       └── alpaca_adapter.py          # Alpaca (US Equities & Crypto)
-│
-├── bridge/                            # Merged from openalgo
-│   ├── webhook_server.py              # FastAPI TradingView alert server
-│   ├── payload_models.py              # Pydantic JSON schemas
-│   └── action_center.py               # Full-Auto vs Semi-Auto execution queue
-│
-├── config/
-│   ├── config.yaml                    # Master configuration
-│   └── symbols_universe.yaml          # Indices & liquid equities specifications
-│
-├── tradingview/
-│   ├── pinescript_strategy_template.pine # Standard equity/futures strategy
-│   └── pinescript_options_buyer.pine     # Automated ATM options buyer
-│
-├── tests/                             # Comprehensive unit test suite
-│   ├── test_analytics.py
-│   ├── test_brain.py
-│   └── test_risk_and_execution.py
-│
-├── main.py                            # Unified CLI dashboard & master runner
-└── requirements.txt                   # Complete Python dependencies
-```
+This immediately:
+1. Trips the internal circuit breaker (halting any further order entry).
+2. Cancels all pending orders across the broker terminal.
+3. Places market exit orders to square off all open positions.
