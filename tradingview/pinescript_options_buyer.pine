@@ -1,0 +1,68 @@
+//@version=5
+strategy("BharatTrader-AI: Automated ATM Options Buyer [Webhook Ready]", overlay=true, initial_capital=100000, default_qty_type=strategy.fixed, default_qty_value=1)
+
+// =============================================================================
+// Inputs & Configuration
+// =============================================================================
+secret_key      = input.string("BHARAT_SECURE_KEY_REPLACE_ME_IN_PROD", "Webhook Secret Key")
+index_name      = input.string("NIFTY", "Underlying Index", options=["NIFTY", "BANKNIFTY", "FINNIFTY", "MIDCPNIFTY"])
+expiry_code     = input.string("24OCT", "Option Expiry Code (YYMMM, e.g. 24OCT)")
+lot_size        = input.int(25, "Contracts per Lot (NIFTY=25, BANKNIFTY=15)", minval=1)
+strike_step     = input.int(50, "Strike Interval Step (NIFTY=50, BANKNIFTY=100)")
+product_type    = input.string("INTRADAY", "Product Type (INTRADAY / DELIVERY)")
+
+// Supertrend Parameters
+atr_period      = input.int(10, "Supertrend ATR Period")
+st_factor       = input.float(3.0, "Supertrend Multiplier")
+[st_value, st_dir] = ta.supertrend(st_factor, atr_period)
+
+// EMA Trend Filter
+fast_ema_len    = input.int(9, "Fast EMA Length")
+slow_ema_len    = input.int(21, "Slow EMA Length")
+fast_ema        = ta.ema(close, fast_ema_len)
+slow_ema        = ta.ema(close, slow_ema_len)
+
+// Momentum RSI
+rsi_val         = ta.rsi(close, 14)
+
+// Plot Indicators
+plot(st_value, color = st_dir == 1 ? color.green : color.red, linewidth=2, title="Supertrend")
+plot(fast_ema, color = color.blue, title="Fast EMA")
+plot(slow_ema, color = color.orange, title="Slow EMA")
+
+// =============================================================================
+// ATM Strike Determination
+// =============================================================================
+atm_strike = math.round(close / strike_step) * strike_step
+
+call_symbol = index_name + expiry_code + str.tostring(atm_strike) + "CE"
+put_symbol  = index_name + expiry_code + str.tostring(atm_strike) + "PE"
+
+// =============================================================================
+// Trading Signals
+// =============================================================================
+bullish_signal = ta.crossover(close, st_value) and (fast_ema > slow_ema) and (rsi_val > 52)
+bearish_signal = ta.crossunder(close, st_value) and (fast_ema < slow_ema) and (rsi_val < 48)
+
+// 1. Buy ATM Call Option
+if (bullish_signal and strategy.position_size == 0)
+    strategy.entry("Long_CE", strategy.long, qty=1)
+    alert_payload = '{"secret_key":"' + secret_key + '","symbol":"' + call_symbol + '","action":"BUY","quantity":' + str.tostring(lot_size) + ',"order_type":"MARKET","product":"' + product_type + '","strategy_name":"Supertrend_CE_Buyer"}'
+    alert(alert_payload, alert.freq_once_per_bar_close)
+
+// 2. Buy ATM Put Option (for Bearish moves)
+if (bearish_signal and strategy.position_size == 0)
+    strategy.entry("Long_PE", strategy.short, qty=1)
+    alert_payload = '{"secret_key":"' + secret_key + '","symbol":"' + put_symbol + '","action":"BUY","quantity":' + str.tostring(lot_size) + ',"order_type":"MARKET","product":"' + product_type + '","strategy_name":"Supertrend_PE_Buyer"}'
+    alert(alert_payload, alert.freq_once_per_bar_close)
+
+// Exit Condition: Supertrend flips
+if (strategy.position_size > 0 and st_dir == -1)
+    strategy.close("Long_CE", comment="Supertrend Bearish Flip")
+    exit_payload = '{"secret_key":"' + secret_key + '","symbol":"' + call_symbol + '","action":"SELL","quantity":' + str.tostring(lot_size) + ',"order_type":"MARKET","product":"' + product_type + '","strategy_name":"Exit_CE"}'
+    alert(exit_payload, alert.freq_once_per_bar_close)
+
+if (strategy.position_size < 0 and st_dir == 1)
+    strategy.close("Long_PE", comment="Supertrend Bullish Flip")
+    exit_payload = '{"secret_key":"' + secret_key + '","symbol":"' + put_symbol + '","action":"SELL","quantity":' + str.tostring(lot_size) + ',"order_type":"MARKET","product":"' + product_type + '","strategy_name":"Exit_PE"}'
+    alert(exit_payload, alert.freq_once_per_bar_close)

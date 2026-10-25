@@ -1,0 +1,71 @@
+# Master Unified Indian AI Live Trading Agent Configuration
+app:
+  name: "BharatTrader-AI"
+  environment: "paper"  # "paper" for simulation, "live" for real exchange execution
+  server_host: "0.0.0.0"
+  server_port: 8000
+  webhook_secret_key: "BHARAT_SECURE_KEY_REPLACE_ME_IN_PROD"
+  execution_mode: "full_auto"  # "full_auto" (instant order) or "semi_auto" (wait for user confirmation)
+  enable_ai_sentinel: true
+  enable_rl_exit_agent: true
+
+# NSE / BSE Trading Hours (Indian Standard Time - Asia/Kolkata)
+session:
+  market_open_time: "09:15"
+  market_close_time: "15:30"
+  intraday_square_off_time: "15:15"  # Mandatory auto square-off for MIS
+  no_fresh_entries_after: "15:00"
+  timezone: "Asia/Kolkata"
+
+# Risk Management Guardrails (SEBI 2025/2026 Compliant)
+risk:
+  max_intraday_loss_inr: 5000.0        # Circuit breaker: kill-switch triggers if hit
+  max_capital_per_trade_percent: 5.0   # Max % equity per single trade
+  max_open_positions: 3                # Max concurrent intraday positions
+  max_trades_per_day: 15               # Over-trading protection
+  enforce_hard_stop_loss: true
+  default_stop_loss_percent: 1.0       # Fallback SL % if omitted
+  max_slippage_percent: 0.5            # Max tolerated slippage on market orders
+  use_kelly_sizing: true               # Kelly criterion dynamic sizing
+  kelly_fraction: 0.5                  # Half-Kelly for capital preservation
+
+# AI Brain & LLM Configuration
+brain:
+  llm_provider: "groq"                 # "groq", "cerebras", "openai", "ollama", "custom"
+  llm_model: "llama-3.3-70b-versatile"
+  confidence_threshold: 0.65           # Minimum composite score to approve order
+  weights:
+    technical: 0.35
+    market_regime: 0.35
+    options_flow: 0.30
+
+# Multi-Broker Adapters Configuration (India)
+brokers:
+  active_broker: "zerodha"  # Options: 'zerodha', 'dhan', 'angel_one', 'fyers', 'upstox'
+  
+  zerodha:
+    api_key: ""
+    api_secret: ""
+    user_id: ""
+    totp_secret: ""          # RFC 6238 Base32 secret for headless daily 2FA
+    access_token: ""
+
+  dhan:
+    client_id: ""
+    access_token: ""
+
+  angel_one:
+    api_key: ""
+    client_code: ""
+    password: ""
+    totp_secret: ""
+
+  fyers:
+    app_id: ""
+    access_token: ""
+
+  upstox:
+    api_key: ""
+    api_secret: ""
+    redirect_uri: "http://127.0.0.1:8000/callback"
+    access_token: ""

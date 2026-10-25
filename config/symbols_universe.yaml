@@ -1,0 +1,49 @@
+# Indian Market Symbols & F&O Contract Specifications
+indices:
+  NIFTY:
+    exchange: "NFO"
+    lot_size: 25
+    strike_step: 50
+    tick_size: 0.05
+    expiry_day: "THURSDAY"
+  
+  BANKNIFTY:
+    exchange: "NFO"
+    lot_size: 15
+    strike_step: 100
+    tick_size: 0.05
+    expiry_day: "WEDNESDAY"
+
+  FINNIFTY:
+    exchange: "NFO"
+    lot_size: 25
+    strike_step: 50
+    tick_size: 0.05
+    expiry_day: "TUESDAY"
+
+  MIDCPNIFTY:
+    exchange: "NFO"
+    lot_size: 50
+    strike_step: 25
+    tick_size: 0.05
+    expiry_day: "MONDAY"
+
+liquid_equities:
+  - symbol: "RELIANCE"
+    exchange: "NSE"
+    lot_size: 250
+  - symbol: "HDFCBANK"
+    exchange: "NSE"
+    lot_size: 550
+  - symbol: "ICICIBANK"
+    exchange: "NSE"
+    lot_size: 700
+  - symbol: "INFY"
+    exchange: "NSE"
+    lot_size: 400
+  - symbol: "TCS"
+    exchange: "NSE"
+    lot_size: 175
+  - symbol: "SBIN"
+    exchange: "NSE"
+    lot_size: 750
