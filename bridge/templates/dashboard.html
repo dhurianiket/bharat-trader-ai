@@ -3,12 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BharatTrader-AI — Institutional Trading Terminal</title>
-  <!-- Tailwind CSS & Inter Font -->
+  <title>BharatTrader-AI — Institutional Trading Workstation</title>
+  
+  <!-- Tailwind CSS & Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -18,21 +20,25 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            sans: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace'],
           },
           colors: {
-            brand: {
-              50: '#f0fdf4',
-              500: '#22c55e',
-              600: '#16a34a',
+            apple: {
+              gray: '#86868b',
+              card: 'rgba(26, 31, 46, 0.65)',
+              border: 'rgba(255, 255, 255, 0.08)',
+              hover: 'rgba(255, 255, 255, 0.12)',
             },
-            dark: {
-              900: '#07090e',
-              850: '#0c1017',
-              800: '#131924',
-              750: '#1a2232',
-              700: '#242f44',
+            accent: {
+              green: '#10b981',
+              greenGlow: 'rgba(16, 185, 129, 0.25)',
+              red: '#f43f5e',
+              redGlow: 'rgba(244, 63, 94, 0.25)',
+              blue: '#3b82f6',
+              purple: '#8b5cf6',
+              amber: '#f59e0b',
             }
           }
         }
@@ -41,224 +47,276 @@
   </script>
 
   <style>
+    /* Apple Liquid Glass & High-DPI Hairline Styles */
+    :root {
+      color-scheme: dark;
+    }
     body {
-      background-color: #07090e;
-      color: #e2e8f0;
+      background-color: #080a10;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(139, 92, 246, 0.05) 0px, transparent 50%);
+      background-attachment: fixed;
       font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      -webkit-font-smoothing: antialiased;
     }
-    .glass-card {
-      background: rgba(19, 25, 36, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.07);
+
+    /* Sub-pixel Hairline Border Pattern */
+    .hairline-card {
+      background: rgba(15, 19, 30, 0.72);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 
+        0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
+        0 10px 30px -10px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .glass-card:hover {
-      border-color: rgba(255, 255, 255, 0.12);
+    .hairline-card:hover {
+      border-color: rgba(255, 255, 255, 0.14);
+      box-shadow: 
+        0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
+        0 20px 40px -15px rgba(0, 0, 0, 0.6);
     }
-    .glow-green {
-      box-shadow: 0 0 20px -5px rgba(34, 197, 94, 0.25);
+
+    /* Apple-style spring interaction */
+    .spring-btn {
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.15s ease, border-color 0.15s ease;
     }
-    .glow-red {
-      box-shadow: 0 0 20px -5px rgba(239, 68, 68, 0.25);
+    .spring-btn:active {
+      transform: scale(0.97);
     }
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0c1017; }
-    ::-webkit-scrollbar-thumb { background: #242f44; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+
+    /* Tabular numeric alignment */
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Custom Glass Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
   </style>
 </head>
-<body class="min-h-screen flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
+<body class="min-h-screen text-slate-100 flex flex-col selection:bg-emerald-500/30 selection:text-emerald-300">
 
-  <!-- TOP HEADER -->
-  <header class="border-b border-white/10 bg-dark-850/80 backdrop-blur sticky top-0 z-50 px-6 py-3.5 flex items-center justify-between">
-    <div class="flex items-center gap-4">
-      <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center font-bold text-white shadow-lg shadow-emerald-500/20">
-          🇮🇳
+  <!-- ========================================================================= -->
+  <!-- 1. APPLE TOP NAVIGATION BAR                                               -->
+  <!-- ========================================================================= -->
+  <nav class="sticky top-0 z-50 border-b border-white/[0.07] bg-[#080a10]/80 backdrop-blur-2xl px-6 py-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      
+      <!-- Brand & Status -->
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-400 p-[1px] shadow-lg shadow-emerald-500/10">
+            <div class="w-full h-full bg-[#0b0e17] rounded-[11px] flex items-center justify-center font-bold text-sm text-white">
+              🇮🇳
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-display font-bold text-sm tracking-tight text-white">BharatTrader-AI</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">PRO v2.0</span>
+            </div>
+            <p class="text-[11px] text-slate-400 font-medium">Autonomous Multi-Broker Terminal</p>
+          </div>
         </div>
-        <div>
-          <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
-            BharatTrader-AI
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">v2.0 LIVE</span>
-          </h1>
-          <p class="text-[11px] text-slate-400 font-mono" id="subHeaderStatus">Autonomous Multi-Broker Terminal</p>
+
+        <!-- Clock & Session Pill -->
+        <div class="hidden sm:flex items-center gap-2.5 ml-3 pl-4 border-l border-white/[0.08] text-xs font-mono">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span class="text-slate-300 tabular-nums font-semibold" id="liveIstClock">--:--:-- IST</span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-white/[0.04] text-slate-400 border border-white/[0.06]" id="marketSessionPill">MARKET CLOSED</span>
         </div>
       </div>
 
-      <div class="hidden md:flex items-center gap-2 ml-4 pl-4 border-l border-white/10 text-xs font-mono">
-        <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-        </span>
-        <span class="text-slate-300" id="liveIstClock">--:--:-- IST</span>
+      <!-- Action & Controls -->
+      <div class="flex items-center gap-3">
+        <!-- Active Broker Badge -->
+        <div class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-xs">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-400"></i>
+          <span class="text-slate-400">Gateway:</span>
+          <span class="font-semibold text-white" id="activeBrokerBadge">Zerodha Kite</span>
+        </div>
+
+        <!-- Environment Mode -->
+        <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-400">
+          <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+          <span id="envBadge">PAPER SIMULATION</span>
+        </div>
+
+        <!-- Panic Kill-Switch -->
+        <button onclick="triggerKillSwitch()" class="spring-btn flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 hover:text-white border border-rose-500/30 text-xs font-bold tracking-wide shadow-sm hover:shadow-rose-500/20">
+          <i data-lucide="octagon-alert" class="w-3.5 h-3.5 text-rose-400"></i>
+          <span>KILL-SWITCH</span>
+        </button>
       </div>
+
     </div>
+  </nav>
 
-    <div class="flex items-center gap-3">
-      <!-- Active Broker Badge -->
-      <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-dark-800 border border-white/10 text-xs">
-        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-400"></i>
-        <span class="text-slate-400">Broker:</span>
-        <span class="font-semibold text-slate-200" id="activeBrokerBadge">Zerodha (Paper)</span>
-      </div>
+  <!-- ========================================================================= -->
+  <!-- 2. MAIN WORKSPACE CONTAINER                                               -->
+  <!-- ========================================================================= -->
+  <main class="flex-1 max-w-7xl mx-auto w-full p-6 space-y-6">
 
-      <!-- Environment Mode Badge -->
-      <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs font-medium text-emerald-400">
-        <i data-lucide="activity" class="w-3.5 h-3.5"></i>
-        <span id="envBadge">PAPER TRADING</span>
-      </div>
-
-      <!-- Kill Switch Button -->
-      <button onclick="triggerKillSwitch()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/30 text-xs font-semibold transition shadow-sm hover:shadow-red-500/20">
-        <i data-lucide="octagon-alert" class="w-3.5 h-3.5"></i>
-        <span>PANIC KILL-SWITCH</span>
-      </button>
-    </div>
-  </header>
-
-  <!-- MAIN VIEWPORT -->
-  <main class="flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
-
-    <!-- HERO METRICS ROW -->
+    <!-- HERO METRIC TILES: 4-COLUMN AIRLINE/APPLE GRID -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
-      <!-- CARD 1: AGENT MONIES (VIRTUAL CAPITAL) -->
-      <div class="glass-card rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between border-emerald-500/20 glow-green">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-medium text-slate-400 flex items-center gap-1.5">
-            <i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i>
-            Agent Demo Capital (Virtual)
+      <!-- TILE 1: AGENT MONIES (VIRTUAL WALLET) -->
+      <div class="hairline-card rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between group">
+        <div class="absolute -right-8 -top-8 w-28 h-28 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
+        <div class="flex items-center justify-between z-10">
+          <span class="text-xs font-medium text-slate-400 flex items-center gap-2">
+            <div class="w-6 h-6 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-400">
+              <i data-lucide="wallet" class="w-3.5 h-3.5"></i>
+            </div>
+            Agent Monies (Virtual)
           </span>
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20">
-            RISK-FREE DEMO
-          </span>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20">DEMO CAPITAL</span>
         </div>
-        <div class="my-3">
-          <div class="text-2xl lg:text-3xl font-extrabold text-white tracking-tight font-mono" id="agentCashDisplay">
+        <div class="my-3 z-10">
+          <div class="text-3xl font-extrabold text-white tracking-tight font-mono tabular-nums" id="agentCashDisplay">
             ₹ 10,00,000.00
           </div>
-          <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
-            Used Margin: <span class="font-mono text-slate-200" id="usedMarginDisplay">₹ 0.00</span>
-          </p>
+          <div class="flex items-center justify-between text-xs text-slate-400 mt-1.5 font-mono">
+            <span>Used Margin:</span>
+            <span class="text-slate-200 tabular-nums" id="usedMarginDisplay">₹ 0.00</span>
+          </div>
         </div>
-        <div class="flex items-center gap-2 pt-2 border-t border-white/5">
-          <button onclick="openDepositModal()" class="flex-1 py-1.5 px-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs transition flex items-center justify-center gap-1">
-            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
-            Add Virtual Funds
+        <div class="flex items-center gap-2 pt-3 border-t border-white/[0.06] z-10">
+          <button onclick="openDepositModal()" class="spring-btn flex-1 py-1.5 px-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/20">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            Add Monies
           </button>
-          <button onclick="resetVirtualFunds()" class="py-1.5 px-2.5 rounded-lg bg-dark-750 hover:bg-dark-700 text-slate-300 text-xs font-medium border border-white/10 transition" title="Reset to ₹10 Lakhs">
-            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+          <button onclick="resetVirtualFunds()" class="spring-btn p-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 border border-white/[0.08]" title="Reset to ₹10 Lakhs">
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
           </button>
         </div>
       </div>
 
-      <!-- CARD 2: REALIZED P&L & DRAWDOWN -->
-      <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+      <!-- TILE 2: REALIZED P&L & SEBI CIRCUIT BREAKER -->
+      <div class="hairline-card rounded-2xl p-5 flex flex-col justify-between group">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-medium text-slate-400 flex items-center gap-1.5">
-            <i data-lucide="trending-up" class="w-4 h-4 text-blue-400"></i>
-            Realized P&L Today
+          <span class="text-xs font-medium text-slate-400 flex items-center gap-2">
+            <div class="w-6 h-6 rounded-lg bg-blue-500/15 flex items-center justify-center text-blue-400">
+              <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+            </div>
+            Today's Realized P&L
           </span>
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
-            INTRADAY
-          </span>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20">INTRADAY</span>
         </div>
         <div class="my-3">
-          <div class="text-2xl lg:text-3xl font-extrabold text-emerald-400 font-mono" id="realizedPnlDisplay">
+          <div class="text-3xl font-extrabold text-emerald-400 tracking-tight font-mono tabular-nums" id="realizedPnlDisplay">
             +₹ 0.00
           </div>
-          <div class="flex items-center justify-between text-xs text-slate-400 mt-1 font-mono">
-            <span>Daily Loss:</span>
-            <span class="text-slate-200" id="dailyLossDisplay">₹ 0.00 / ₹ 5,000</span>
+          <div class="flex items-center justify-between text-xs text-slate-400 mt-1.5 font-mono">
+            <span>SEBI Drawdown:</span>
+            <span class="text-slate-300 tabular-nums" id="dailyLossDisplay">₹ 0.00 / ₹ 5,000</span>
           </div>
         </div>
-        <div class="w-full bg-dark-750 rounded-full h-1.5 overflow-hidden">
-          <div class="bg-blue-500 h-1.5 rounded-full" id="dailyLossBar" style="width: 0%"></div>
+        <div class="w-full bg-white/[0.06] rounded-full h-1.5 overflow-hidden">
+          <div class="bg-gradient-to-r from-blue-500 to-indigo-500 h-1.5 rounded-full transition-all duration-500" id="dailyLossBar" style="width: 0%"></div>
         </div>
       </div>
 
-      <!-- CARD 3: MARKET REGIME & SENTINEL -->
-      <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+      <!-- TILE 3: 5-REGIME AI CLASSIFIER -->
+      <div class="hairline-card rounded-2xl p-5 flex flex-col justify-between">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-medium text-slate-400 flex items-center gap-1.5">
-            <i data-lucide="brain-circuit" class="w-4 h-4 text-purple-400"></i>
+          <span class="text-xs font-medium text-slate-400 flex items-center gap-2">
+            <div class="w-6 h-6 rounded-lg bg-purple-500/15 flex items-center justify-center text-purple-400">
+              <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
+            </div>
             AI Market Regime
           </span>
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
-            CONF 85%
-          </span>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-400 border border-purple-500/20 font-bold">CONF 85%</span>
         </div>
         <div class="my-3">
-          <div class="text-xl lg:text-2xl font-bold text-white tracking-tight flex items-center gap-2" id="regimeBadge">
-            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+          <div class="text-xl font-bold text-white tracking-tight flex items-center gap-2 font-display" id="regimeBadge">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
             TRENDING_BULL
           </div>
-          <p class="text-xs text-slate-400 mt-1" id="regimeReason">
-            Fast EMA +0.33% above Slow EMA (Directional Trend)
+          <p class="text-xs text-slate-400 mt-1 truncate" id="regimeReason">
+            EMA +0.33% slope • Bullish Momentum
           </p>
         </div>
-        <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between pt-2 border-t border-white/5">
-          <span>AI Sentinel:</span>
-          <span class="text-emerald-400 font-semibold">ACTIVE CONFIRMATION</span>
+        <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between pt-3 border-t border-white/[0.06]">
+          <span>Signal Gate:</span>
+          <span class="text-emerald-400 font-bold flex items-center gap-1">
+            <i data-lucide="check-circle" class="w-3 h-3"></i> AI APPROVED
+          </span>
         </div>
       </div>
 
-      <!-- CARD 4: F&O MAX PAIN & PCR -->
-      <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+      <!-- TILE 4: NSE OPTION CHAIN MAX PAIN & PCR -->
+      <div class="hairline-card rounded-2xl p-5 flex flex-col justify-between">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-medium text-slate-400 flex items-center gap-1.5">
-            <i data-lucide="bar-chart-3" class="w-4 h-4 text-amber-400"></i>
-            NSE F&O Sentiment
+          <span class="text-xs font-medium text-slate-400 flex items-center gap-2">
+            <div class="w-6 h-6 rounded-lg bg-amber-500/15 flex items-center justify-center text-amber-400">
+              <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i>
+            </div>
+            F&O Max Pain Strike
           </span>
-          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">
-            NIFTY 50
-          </span>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">NIFTY 50</span>
         </div>
-        <div class="my-3">
-          <div class="text-2xl lg:text-3xl font-extrabold text-white font-mono flex items-center justify-between">
-            <span id="maxPainStrike">24,500</span>
-            <span class="text-xs px-2.5 py-1 rounded-lg bg-dark-750 text-slate-300 font-mono border border-white/10" id="pcrDisplay">PCR 0.84</span>
+        <div class="my-3 flex items-center justify-between">
+          <div>
+            <div class="text-3xl font-extrabold text-white font-mono tabular-nums" id="maxPainStrike">24,500</div>
+            <p class="text-xs text-slate-400 mt-1">Option Writers' Min Payout</p>
           </div>
-          <p class="text-xs text-slate-400 mt-1">
-            Max Pain Strike (Option Writers' Minimum Payout)
-          </p>
+          <div class="text-right">
+            <div class="text-base font-bold font-mono text-amber-400" id="pcrDisplay">0.84</div>
+            <span class="text-[10px] text-slate-400 uppercase font-mono">Put-Call Ratio</span>
+          </div>
         </div>
-        <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between pt-2 border-t border-white/5">
+        <div class="text-[11px] font-mono text-slate-400 flex items-center justify-between pt-3 border-t border-white/[0.06]">
           <span>Total CE / PE OI:</span>
-          <span class="text-slate-300">4.95L / 4.15L</span>
+          <span class="text-slate-300 tabular-nums">4.95L / 4.15L</span>
         </div>
       </div>
 
     </div>
 
-    <!-- MAIN INTERACTIVE SECTION: ORDER TICKET + POSITIONS + GREEKS -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- ========================================================================= -->
+    <!-- 3. INTERACTIVE TERMINAL: ORDER TICKET + ACTIVE POSITIONS                   -->
+    <!-- ========================================================================= -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-      <!-- LEFT: BROWSER ORDER PLACEMENT TICKET (1 Column) -->
-      <div class="glass-card rounded-2xl p-5 space-y-4">
-        <div class="flex items-center justify-between border-b border-white/10 pb-3">
-          <h2 class="text-sm font-bold text-white flex items-center gap-2">
-            <i data-lucide="send" class="w-4 h-4 text-emerald-400"></i>
-            Instant Order Ticket
-          </h2>
-          <span class="text-[11px] text-slate-400 font-mono">SEBI Risk Checked</span>
+      <!-- LEFT: BROWSER ORDER PLACEMENT TICKET (4 Cols) -->
+      <div class="lg:col-span-4 hairline-card rounded-2xl p-5 space-y-4">
+        
+        <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-400">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+            </div>
+            <h2 class="text-sm font-bold text-white font-display">Instant Order Ticket</h2>
+          </div>
+          <span class="text-[10px] font-mono text-slate-400 px-2 py-0.5 rounded bg-white/[0.04]">SEBI CHECKED</span>
         </div>
 
-        <form id="orderForm" onsubmit="handlePlaceOrder(event)" class="space-y-3.5">
+        <form id="orderForm" onsubmit="event.preventDefault()" class="space-y-4">
+          <!-- Quick Symbol Chips -->
           <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Index / Symbol</label>
+            <label class="block text-xs font-medium text-slate-400 mb-1.5">Underlying Contract</label>
             <div class="grid grid-cols-3 gap-2">
-              <button type="button" onclick="selectSymbol('NIFTY', 25, 24500)" class="symbol-btn py-1.5 px-2 rounded-lg bg-dark-750 border border-emerald-500/40 text-emerald-400 text-xs font-bold text-center">NIFTY</button>
-              <button type="button" onclick="selectSymbol('BANKNIFTY', 15, 51200)" class="symbol-btn py-1.5 px-2 rounded-lg bg-dark-750 border border-white/10 text-slate-300 hover:text-white text-xs font-medium text-center">BANKNIFTY</button>
-              <button type="button" onclick="selectSymbol('RELIANCE', 1, 2750)" class="symbol-btn py-1.5 px-2 rounded-lg bg-dark-750 border border-white/10 text-slate-300 hover:text-white text-xs font-medium text-center">RELIANCE</button>
+              <button type="button" onclick="selectSymbol('NIFTY', 25, 24500)" class="symbol-btn spring-btn py-1.5 px-2 rounded-xl bg-white/[0.04] border border-emerald-500/40 text-emerald-400 text-xs font-bold text-center">NIFTY</button>
+              <button type="button" onclick="selectSymbol('BANKNIFTY', 15, 51200)" class="symbol-btn spring-btn py-1.5 px-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium text-center">BANKNIFTY</button>
+              <button type="button" onclick="selectSymbol('RELIANCE', 1, 2750)" class="symbol-btn spring-btn py-1.5 px-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium text-center">RELIANCE</button>
             </div>
           </div>
 
+          <!-- Contract Type & Product -->
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">Contract Type</label>
-              <select id="contractType" onchange="updateContractSymbol()" class="w-full bg-dark-750 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500">
+              <label class="block text-xs font-medium text-slate-400 mb-1">Type</label>
+              <select id="contractType" onchange="updateContractSymbol()" class="w-full bg-[#0c1017] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
                 <option value="CE">ATM Call (CE)</option>
                 <option value="PE">ATM Put (PE)</option>
                 <option value="FUT">Futures (FUT)</option>
@@ -267,67 +325,72 @@
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-400 mb-1">Product</label>
-              <select id="productType" class="w-full bg-dark-750 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500">
+              <select id="productType" class="w-full bg-[#0c1017] border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition">
                 <option value="INTRADAY">MIS (Intraday)</option>
                 <option value="DELIVERY">CNC (Normal)</option>
               </select>
             </div>
           </div>
 
+          <!-- Symbol Input -->
           <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1">Trading Symbol</label>
-            <input type="text" id="targetSymbol" value="NIFTY24OCT24500CE" required class="w-full bg-dark-750 border border-white/10 rounded-lg px-3 py-2 text-xs font-mono text-emerald-400 focus:outline-none focus:border-emerald-500 font-bold" />
+            <label class="block text-xs font-medium text-slate-400 mb-1">Tradingsymbol</label>
+            <input type="text" id="targetSymbol" value="NIFTY24OCT24500CE" required class="w-full bg-[#0c1017] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-emerald-400 font-bold focus:outline-none focus:border-emerald-500" />
           </div>
 
+          <!-- Qty & Price -->
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-medium text-slate-400 mb-1">Quantity</label>
-              <input type="number" id="orderQuantity" value="25" min="1" required class="w-full bg-dark-750 border border-white/10 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500" />
+              <input type="number" id="orderQuantity" value="25" min="1" required class="w-full bg-[#0c1017] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500" />
             </div>
             <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">Est. Price (₹)</label>
-              <input type="number" step="0.05" id="orderPrice" value="145.00" required class="w-full bg-dark-750 border border-white/10 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500" />
+              <label class="block text-xs font-medium text-slate-400 mb-1">Limit / Market (₹)</label>
+              <input type="number" step="0.05" id="orderPrice" value="142.50" required class="w-full bg-[#0c1017] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
 
+          <!-- SL & TP Bracket -->
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-medium text-slate-400 mb-1">Stop Loss (₹)</label>
-              <input type="number" step="0.05" id="orderSl" value="120.00" class="w-full bg-dark-750 border border-white/10 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500" />
+              <input type="number" step="0.05" id="orderSl" value="115.00" class="w-full bg-[#0c1017] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-rose-300 focus:outline-none focus:border-rose-500" />
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-400 mb-1">Target Profit (₹)</label>
-              <input type="number" step="0.05" id="orderTp" value="195.00" class="w-full bg-dark-750 border border-white/10 rounded-lg px-3 py-2 text-xs font-mono text-slate-200 focus:outline-none focus:border-emerald-500" />
+              <input type="number" step="0.05" id="orderTp" value="195.00" class="w-full bg-[#0c1017] border border-white/[0.08] rounded-xl px-3 py-2 text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-500" />
             </div>
           </div>
 
-          <div class="pt-2 grid grid-cols-2 gap-2">
-            <button type="button" onclick="submitOrder('BUY')" class="w-full py-2.5 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-600 font-bold text-slate-950 text-xs transition flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20">
-              <i data-lucide="arrow-up-circle" class="w-4 h-4"></i>
+          <!-- Action Buttons -->
+          <div class="pt-2 grid grid-cols-2 gap-2.5">
+            <button type="button" onclick="submitOrder('BUY')" class="spring-btn w-full py-2.5 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 font-bold text-slate-950 text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20">
+              <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
               BUY (LONG)
             </button>
-            <button type="button" onclick="submitOrder('SELL')" class="w-full py-2.5 px-3 rounded-lg bg-red-500 hover:bg-red-600 font-bold text-white text-xs transition flex items-center justify-center gap-1.5 shadow-lg shadow-red-500/20">
-              <i data-lucide="arrow-down-circle" class="w-4 h-4"></i>
+            <button type="button" onclick="submitOrder('SELL')" class="spring-btn w-full py-2.5 px-3 rounded-xl bg-rose-500 hover:bg-rose-400 font-bold text-white text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-rose-500/20">
+              <i data-lucide="arrow-down-right" class="w-4 h-4"></i>
               SELL (SHORT)
             </button>
           </div>
         </form>
+
       </div>
 
-      <!-- MIDDLE & RIGHT: POSITIONS + GREEKS (2 Columns) -->
-      <div class="lg:col-span-2 space-y-6">
+      <!-- RIGHT: ACTIVE POSITIONS & LIVE GREEKS (8 Cols) -->
+      <div class="lg:col-span-8 space-y-6">
 
-        <!-- POSITIONS TABLE -->
-        <div class="glass-card rounded-2xl p-5 space-y-3">
-          <div class="flex items-center justify-between border-b border-white/10 pb-3">
-            <div class="flex items-center gap-2">
-              <h2 class="text-sm font-bold text-white flex items-center gap-2">
-                <i data-lucide="layers" class="w-4 h-4 text-blue-400"></i>
-                Active Positions
-              </h2>
-              <span class="text-xs font-mono px-2 py-0.5 rounded-full bg-dark-750 text-slate-300 border border-white/10" id="positionsCountBadge">0</span>
+        <!-- ACTIVE POSITIONS TABLE -->
+        <div class="hairline-card rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 rounded-lg bg-blue-500/15 flex items-center justify-center text-blue-400">
+                <i data-lucide="layers" class="w-4 h-4"></i>
+              </div>
+              <h2 class="text-sm font-bold text-white font-display">Active Portfolio Positions</h2>
+              <span class="text-xs font-mono px-2 py-0.5 rounded-full bg-white/[0.04] text-slate-300 border border-white/[0.08]" id="positionsCountBadge">0</span>
             </div>
-            <button onclick="fetchHealthAndPositions()" class="text-xs text-slate-400 hover:text-white flex items-center gap-1 transition">
+            <button onclick="fetchHealthAndPositions()" class="spring-btn text-xs text-slate-400 hover:text-white flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/[0.06]">
               <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
               Refresh
             </button>
@@ -335,7 +398,7 @@
 
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs font-mono">
-              <thead class="text-slate-400 uppercase bg-dark-750/50 border-b border-white/5">
+              <thead class="text-slate-400 uppercase bg-white/[0.02] border-b border-white/[0.06]">
                 <tr>
                   <th class="py-2.5 px-3">Symbol</th>
                   <th class="py-2.5 px-3">Side</th>
@@ -345,10 +408,10 @@
                   <th class="py-2.5 px-3 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody id="positionsTableBody" class="divide-y divide-white/5 text-slate-200">
+              <tbody id="positionsTableBody" class="divide-y divide-white/[0.05] text-slate-200">
                 <tr>
-                  <td colspan="6" class="py-8 text-center text-slate-500">
-                    No active positions open. Place an order above or fire a TradingView webhook alert.
+                  <td colspan="6" class="py-8 text-center text-slate-500 font-sans">
+                    No active positions open. Place a trade or fire a TradingView alert to simulate.
                   </td>
                 </tr>
               </tbody>
@@ -356,50 +419,54 @@
           </div>
         </div>
 
-        <!-- OPTIONS GREEKS CALCULATOR -->
-        <div class="glass-card rounded-2xl p-5 space-y-3">
-          <div class="flex items-center justify-between border-b border-white/10 pb-3">
-            <h2 class="text-sm font-bold text-white flex items-center gap-2">
-              <i data-lucide="calculator" class="w-4 h-4 text-purple-400"></i>
-              Live Black-76 Greeks & Bisection IV Solver
-            </h2>
-            <span class="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">F&O READY</span>
+        <!-- PURE-MATH BLACK-76 GREEKS STRIP -->
+        <div class="hairline-card rounded-2xl p-5 space-y-3">
+          <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 rounded-lg bg-purple-500/15 flex items-center justify-center text-purple-400">
+                <i data-lucide="binary" class="w-3.5 h-3.5"></i>
+              </div>
+              <h2 class="text-xs font-bold text-white uppercase tracking-wider font-display">Live Black-76 Options Greeks</h2>
+            </div>
+            <span class="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">NIFTY 24500 CE</span>
           </div>
 
           <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-            <div class="p-3 rounded-xl bg-dark-750 border border-white/5 text-center">
-              <div class="text-[10px] text-slate-400 uppercase font-semibold">Delta (Δ)</div>
+            <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
+              <span class="text-[10px] text-slate-400 uppercase font-medium">Delta (Δ)</span>
               <div class="text-base font-bold font-mono text-emerald-400 mt-1" id="greekDelta">0.5263</div>
             </div>
-            <div class="p-3 rounded-xl bg-dark-750 border border-white/5 text-center">
-              <div class="text-[10px] text-slate-400 uppercase font-semibold">Gamma (Γ)</div>
+            <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
+              <span class="text-[10px] text-slate-400 uppercase font-medium">Gamma (Γ)</span>
               <div class="text-base font-bold font-mono text-blue-400 mt-1" id="greekGamma">0.0012</div>
             </div>
-            <div class="p-3 rounded-xl bg-dark-750 border border-white/5 text-center">
-              <div class="text-[10px] text-slate-400 uppercase font-semibold">Theta (Θ)</div>
-              <div class="text-base font-bold font-mono text-red-400 mt-1" id="greekTheta">-16.53/d</div>
+            <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
+              <span class="text-[10px] text-slate-400 uppercase font-medium">Theta (Θ)</span>
+              <div class="text-base font-bold font-mono text-rose-400 mt-1" id="greekTheta">-16.53/d</div>
             </div>
-            <div class="p-3 rounded-xl bg-dark-750 border border-white/5 text-center">
-              <div class="text-[10px] text-slate-400 uppercase font-semibold">Vega (ν)</div>
+            <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
+              <span class="text-[10px] text-slate-400 uppercase font-medium">Vega (ν)</span>
               <div class="text-base font-bold font-mono text-amber-400 mt-1" id="greekVega">10.21</div>
             </div>
-            <div class="p-3 rounded-xl bg-dark-750 border border-white/5 text-center">
-              <div class="text-[10px] text-slate-400 uppercase font-semibold">Solved IV</div>
+            <div class="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center">
+              <span class="text-[10px] text-slate-400 uppercase font-medium">Solved IV</span>
               <div class="text-base font-bold font-mono text-purple-400 mt-1" id="greekIv">12.93%</div>
             </div>
           </div>
         </div>
 
-        <!-- TRADINGVIEW WEBHOOK PAYLOAD COPYSHEET -->
-        <div class="glass-card rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div class="flex items-center gap-2">
-            <i data-lucide="webhook" class="w-4 h-4 text-emerald-400"></i>
+        <!-- TRADINGVIEW WEBHOOK COPYSHEET -->
+        <div class="hairline-card rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-400">
+              <i data-lucide="radio" class="w-4 h-4"></i>
+            </div>
             <div>
-              <span class="font-bold text-white">TradingView Webhook URL:</span>
-              <span class="font-mono text-slate-300 ml-1" id="webhookUrlDisplay">http://localhost:8080/webhook</span>
+              <div class="font-bold text-white">TradingView Webhook Listener:</div>
+              <span class="font-mono text-slate-300 text-[11px]" id="webhookUrlDisplay">http://localhost:8080/webhook</span>
             </div>
           </div>
-          <button onclick="copyWebhookPayload()" class="px-3 py-1.5 rounded-lg bg-dark-750 hover:bg-dark-700 text-slate-200 border border-white/10 font-medium transition flex items-center gap-1.5">
+          <button onclick="copyWebhookPayload()" class="spring-btn px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-slate-200 border border-white/[0.08] font-semibold transition flex items-center gap-1.5">
             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
             Copy Pine Script Payload
           </button>
@@ -409,56 +476,60 @@
 
     </div>
 
-    <!-- TERMINAL ACTIVITY FEED -->
-    <div class="glass-card rounded-2xl p-5 space-y-2">
-      <div class="flex items-center justify-between border-b border-white/10 pb-2">
-        <h2 class="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider font-mono">
-          <i data-lucide="terminal" class="w-4 h-4 text-emerald-400"></i>
-          Engine Real-Time Telemetry & Execution Log
-        </h2>
-        <span class="text-[10px] font-mono text-slate-400">Streaming live</span>
+    <!-- ========================================================================= -->
+    <!-- 4. STREAMING ENGINE LOG TERMINAL                                          -->
+    <!-- ========================================================================= -->
+    <div class="hairline-card rounded-2xl p-5 space-y-2">
+      <div class="flex items-center justify-between border-b border-white/[0.08] pb-2.5">
+        <div class="flex items-center gap-2">
+          <div class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></div>
+          <h2 class="text-xs font-bold text-white uppercase tracking-wider font-mono">Live Engine Telemetry & Order Feed</h2>
+        </div>
+        <span class="text-[10px] font-mono text-slate-400">WebSocket / Polling Active</span>
       </div>
-      <div id="terminalLog" class="h-36 overflow-y-auto font-mono text-[11px] text-slate-300 space-y-1 p-2 bg-dark-900/60 rounded-xl border border-white/5">
-        <div class="text-emerald-400">[SYSTEM INIT] BharatTrader-AI Live Terminal running. Listening on port 8080.</div>
+      <div id="terminalLog" class="h-32 overflow-y-auto font-mono text-[11px] text-slate-300 space-y-1 p-3 bg-[#0a0d14]/70 rounded-xl border border-white/[0.04]">
+        <div class="text-emerald-400">[SYSTEM] BharatTrader-AI Terminal initialized. Engine connected to localhost:8080.</div>
       </div>
     </div>
 
   </main>
 
-  <!-- MODAL: ADD VIRTUAL CAPITAL (AGENT MONIES) -->
-  <div id="depositModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-    <div class="glass-card bg-dark-850 rounded-2xl max-w-md w-full p-6 space-y-4 border border-emerald-500/30 glow-green">
-      <div class="flex items-center justify-between border-b border-white/10 pb-3">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-            <i data-lucide="coins" class="w-4 h-4"></i>
+  <!-- ========================================================================= -->
+  <!-- 5. AGENT MONIES DEPOSIT MODAL                                             -->
+  <!-- ========================================================================= -->
+  <div id="depositModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+    <div class="hairline-card bg-[#0e121c] rounded-2xl max-w-md w-full p-6 space-y-5 border border-emerald-500/30 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-white/[0.08] pb-3.5">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+            ₹
           </div>
           <div>
-            <h3 class="text-sm font-bold text-white">Deposit Virtual Agent Capital</h3>
-            <p class="text-[11px] text-slate-400">Risk-free demo currency for AI simulations</p>
+            <h3 class="text-sm font-bold text-white font-display">Deposit Agent Virtual Capital</h3>
+            <p class="text-[11px] text-slate-400">Demo money for risk-free simulation</p>
           </div>
         </div>
-        <button onclick="closeDepositModal()" class="text-slate-400 hover:text-white">
+        <button onclick="closeDepositModal()" class="text-slate-400 hover:text-white transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
       <div class="space-y-3">
-        <label class="block text-xs font-medium text-slate-300">Select Amount to Add</label>
+        <label class="block text-xs font-medium text-slate-300">Quick Deposit Chips</label>
         <div class="grid grid-cols-3 gap-2">
-          <button type="button" onclick="setDepositAmount(50000)" class="py-2 rounded-lg bg-dark-750 hover:bg-dark-700 text-xs font-mono font-bold text-slate-200 border border-white/10">+ ₹50,000</button>
-          <button type="button" onclick="setDepositAmount(100000)" class="py-2 rounded-lg bg-dark-750 hover:bg-dark-700 text-xs font-mono font-bold text-slate-200 border border-white/10">+ ₹1,00,000</button>
-          <button type="button" onclick="setDepositAmount(500000)" class="py-2 rounded-lg bg-dark-750 hover:bg-dark-700 text-xs font-mono font-bold text-slate-200 border border-white/10">+ ₹5,00,000</button>
+          <button type="button" onclick="setDepositAmount(50000)" class="spring-btn py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-mono font-bold text-slate-200 border border-white/[0.08]">+ ₹50,000</button>
+          <button type="button" onclick="setDepositAmount(100000)" class="spring-btn py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-mono font-bold text-slate-200 border border-white/[0.08]">+ ₹1,00,000</button>
+          <button type="button" onclick="setDepositAmount(500000)" class="spring-btn py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-mono font-bold text-slate-200 border border-white/[0.08]">+ ₹5,00,000</button>
         </div>
 
         <div>
           <label class="block text-xs font-medium text-slate-400 mb-1">Custom Amount (INR)</label>
-          <input type="number" id="customDepositInput" placeholder="Enter amount in ₹" class="w-full bg-dark-750 border border-white/10 rounded-lg px-3 py-2 text-xs font-mono text-emerald-400 font-bold focus:outline-none focus:border-emerald-500" />
+          <input type="number" id="customDepositInput" placeholder="Enter custom amount in ₹" class="w-full bg-[#0a0d14] border border-white/[0.08] rounded-xl px-3.5 py-2 text-xs font-mono text-emerald-400 font-bold focus:outline-none focus:border-emerald-500" />
         </div>
       </div>
 
-      <div class="flex items-center gap-2 pt-2">
-        <button onclick="submitDepositFunds()" class="w-full py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 font-bold text-slate-950 text-xs transition flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20">
+      <div class="flex items-center gap-2 pt-1">
+        <button onclick="submitDepositFunds()" class="spring-btn w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 font-bold text-slate-950 text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20">
           <i data-lucide="check" class="w-4 h-4"></i>
           Deposit to Agent Monies
         </button>
@@ -466,7 +537,9 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT APP LOGIC -->
+  <!-- ========================================================================= -->
+  <!-- 6. JAVASCRIPT APPLICATION LOGIC                                           -->
+  <!-- ========================================================================= -->
   <script>
     const SECRET_KEY = "BHARAT_SECURE_KEY_REPLACE_ME_IN_PROD";
     let currentSpotPrice = 24500;
@@ -481,7 +554,7 @@
       const time = new Date().toLocaleTimeString();
       d.innerHTML = `<span class="text-slate-500">[${time}]</span> ${msg}`;
       if (type === "success") d.className = "text-emerald-400";
-      else if (type === "error") d.className = "text-red-400 font-bold";
+      else if (type === "error") d.className = "text-rose-400 font-bold";
       else if (type === "warn") d.className = "text-amber-400";
       term.appendChild(d);
       term.scrollTop = term.scrollHeight;
@@ -495,9 +568,9 @@
 
       document.querySelectorAll(".symbol-btn").forEach(btn => {
         if (btn.innerText === sym) {
-          btn.className = "symbol-btn py-1.5 px-2 rounded-lg bg-dark-750 border border-emerald-500/40 text-emerald-400 text-xs font-bold text-center";
+          btn.className = "symbol-btn spring-btn py-1.5 px-2 rounded-xl bg-white/[0.04] border border-emerald-500/40 text-emerald-400 text-xs font-bold text-center";
         } else {
-          btn.className = "symbol-btn py-1.5 px-2 rounded-lg bg-dark-750 border border-white/10 text-slate-300 hover:text-white text-xs font-medium text-center";
+          btn.className = "symbol-btn spring-btn py-1.5 px-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-slate-300 hover:text-white text-xs font-medium text-center";
         }
       });
     }
@@ -648,6 +721,7 @@
         document.getElementById("liveIstClock").innerText = data.current_ist_time.split(" ")[1] + " IST";
         document.getElementById("activeBrokerBadge").innerText = data.active_broker.replace("Adapter", "");
         document.getElementById("envBadge").innerText = data.environment;
+        document.getElementById("marketSessionPill").innerText = data.market_open ? "MARKET OPEN" : "MARKET CLOSED";
 
         // Balances
         const cash = data.account_balance.available_cash || 1000000.0;
@@ -676,20 +750,20 @@
     function renderPositions(positions) {
       const tbody = document.getElementById("positionsTableBody");
       if (!positions || positions.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-500">No active positions open.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-500 font-sans">No active positions open.</td></tr>`;
         return;
       }
       tbody.innerHTML = positions.map((p, idx) => `
-        <tr class="hover:bg-dark-750/30 transition">
+        <tr class="hover:bg-white/[0.02] transition">
           <td class="py-2.5 px-3 font-bold text-white">${p.symbol}</td>
           <td class="py-2.5 px-3">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${p.action === 'BUY' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}">${p.action}</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${p.action === 'BUY' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}">${p.action}</span>
           </td>
-          <td class="py-2.5 px-3">${p.quantity}</td>
-          <td class="py-2.5 px-3">₹ ${Number(p.price).toFixed(2)}</td>
+          <td class="py-2.5 px-3 tabular-nums">${p.quantity}</td>
+          <td class="py-2.5 px-3 tabular-nums">₹ ${Number(p.price).toFixed(2)}</td>
           <td class="py-2.5 px-3 text-slate-400">${p.product || 'INTRADAY'}</td>
           <td class="py-2.5 px-3 text-right">
-            <button onclick="closeSinglePosition('${p.order_id || idx}')" class="px-2 py-1 rounded bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] font-semibold transition">Close</button>
+            <button onclick="closeSinglePosition('${p.order_id || idx}')" class="spring-btn px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-semibold transition">Square Off</button>
           </td>
         </tr>
       `).join("");
