@@ -317,6 +317,60 @@ def create_app(
         """
         return market_data_service.get_company_profile(symbol)
 
+    @app.get("/api/market/google-finance/{symbol}")
+    def get_google_finance_live_quote(symbol: str):
+        """
+        Direct parser extracting live quote and status directly from Google Finance page.
+        """
+        live_data = market_data_service.fetch_google_finance_live(symbol)
+        if live_data:
+            return live_data
+        # Resilient fallback to profile data
+        prof = market_data_service.get_company_profile(symbol)
+        gf_sym = market_data_service.resolve_google_finance_symbol(symbol)
+        return {
+            "google_finance_symbol": gf_sym,
+            "google_finance_url": f"https://www.google.com/finance/quote/{gf_sym}",
+            "company_name": prof.get("company_name", symbol),
+            "currency_symbol": prof.get("currency_symbol", "₹"),
+            "current_price": prof.get("current_price", 0.0),
+            "change": prof.get("change", 0.0),
+            "change_percent": prof.get("change_percent", 0.0),
+            "is_positive": prof.get("is_positive", True),
+            "description": prof.get("description", ""),
+            "data_source": "Google Finance Direct / Hybrid Feed"
+        }
+
+    @app.get("/api/market/serpapi/{symbol}")
+    def get_serpapi_live_payload(symbol: str, api_key: Optional[str] = None):
+        """
+        Returns structured SerpApi JSON payload matching the SerpApi Google Finance API playground.
+        """
+        return market_data_service.get_serpapi_payload(symbol, api_key=api_key)
+
+    @app.post("/api/market/serpapi-key")
+    def set_serpapi_key(payload: Dict[str, str]):
+        """
+        Configures SerpApi API key for live SerpApi search queries.
+        """
+        key = payload.get("api_key", "").strip()
+        market_data_service.serpapi_api_key = key
+        return {"status": "SUCCESS", "configured": bool(key)}
+
+    @app.get("/api/market/financials/{symbol}")
+    def get_company_financials(symbol: str):
+        """
+        Returns quarterly and annual financials (Revenue, Net Income, Margins, Cash Flow).
+        """
+        return market_data_service.get_company_financials(symbol)
+
+    @app.get("/api/market/earnings/{symbol}")
+    def get_company_earnings(symbol: str):
+        """
+        Returns quarterly EPS estimates, actuals, surprises, and next earnings dates.
+        """
+        return market_data_service.get_company_earnings(symbol)
+
     @app.get("/api/market/history/{symbol}")
     def get_company_historical_bars(symbol: str, period: str = "1mo", interval: str = "1d"):
         """

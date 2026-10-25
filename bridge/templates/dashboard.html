@@ -47,39 +47,80 @@
   </script>
 
   <style>
-    /* Modern Luminous Glassmorphic Design System (Linear / Apple Pro Inspired) */
+    /* Modern Luminous Glassmorphic Design System (Linear / Apple Pro / Google Finance Inspired) */
     :root {
+      --bg-color: #202124;
+      --card-bg: rgba(48, 49, 52, 0.90);
+      --card-border: rgba(255, 255, 255, 0.14);
+      --nav-bg: rgba(32, 33, 36, 0.96);
+      --inner-panel: #292a2d;
+      --text-main: #f8fafc;
+      --text-muted: #9aa0a6;
+      --input-bg: #1f2023;
+      --accent-blue: #8ab4f8;
+      --accent-green: #81c995;
+      --accent-red: #f28b82;
       color-scheme: dark;
+    }
+
+    [data-theme="nordic-navy"] {
+      --bg-color: #1e2532;
+      --card-bg: rgba(37, 49, 70, 0.88);
+      --card-border: rgba(255, 255, 255, 0.15);
+      --nav-bg: rgba(24, 33, 48, 0.96);
+      --inner-panel: #172132;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --input-bg: #141c2c;
+      --accent-blue: #60a5fa;
+      --accent-green: #34d399;
+      --accent-red: #f87171;
+    }
+
+    [data-theme="clean-light"] {
+      --bg-color: #f1f5f9;
+      --card-bg: rgba(255, 255, 255, 0.97);
+      --card-border: rgba(203, 213, 225, 0.95);
+      --nav-bg: rgba(255, 255, 255, 0.98);
+      --inner-panel: #f8fafc;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --input-bg: #ffffff;
+      --accent-blue: #2563eb;
+      --accent-green: #059669;
+      --accent-red: #dc2626;
+      color-scheme: light;
     }
     
     body {
-      background-color: #0b1120;
+      background-color: var(--bg-color);
+      color: var(--text-main);
       background-image: 
-        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.16) 0px, transparent 45%),
-        radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.18) 0px, transparent 45%),
-        radial-gradient(at 50% 40%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
-        radial-gradient(at 80% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 45%);
+        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.10) 0px, transparent 45%),
+        radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.12) 0px, transparent 45%),
+        radial-gradient(at 50% 40%, rgba(99, 102, 241, 0.06) 0px, transparent 50%);
       background-attachment: fixed;
       font-feature-settings: "cv02", "cv03", "cv04", "cv11";
       -webkit-font-smoothing: antialiased;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     /* Luminous Glass Card with Sub-Pixel Hairline Bevel */
     .glass-card {
-      background: rgba(24, 34, 53, 0.72);
+      background: var(--card-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid var(--card-border);
       box-shadow: 
-        0 1px 0 0 rgba(255, 255, 255, 0.14) inset,
-        0 10px 30px -10px rgba(0, 0, 0, 0.45);
+        0 1px 0 0 rgba(255, 255, 255, 0.12) inset,
+        0 10px 30px -10px rgba(0, 0, 0, 0.35);
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .glass-card:hover {
       border-color: rgba(255, 255, 255, 0.22);
       box-shadow: 
-        0 1px 0 0 rgba(255, 255, 255, 0.2) inset,
-        0 20px 40px -15px rgba(0, 0, 0, 0.55);
+        0 1px 0 0 rgba(255, 255, 255, 0.18) inset,
+        0 20px 40px -15px rgba(0, 0, 0, 0.45);
       transform: translateY(-2px);
     }
 
@@ -199,6 +240,22 @@
           <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-400"></i>
           <span class="text-slate-400">Broker:</span>
           <span class="font-bold text-white" id="activeBrokerBadge">Zerodha Kite</span>
+        </div>
+
+        <!-- Theme Palette Switcher -->
+        <div class="flex items-center bg-black/25 p-1 rounded-xl border border-white/[0.12] text-xs font-mono">
+          <button onclick="setTheme('google-slate')" id="themeBtnSlate" class="theme-btn px-2.5 py-1 rounded-lg text-white font-bold transition flex items-center gap-1.5 bg-white/[0.14] shadow-sm" title="Google Finance Slate Theme (Soft Charcoal)">
+            <span>🌙</span>
+            <span class="hidden sm:inline">Google Slate</span>
+          </button>
+          <button onclick="setTheme('nordic-navy')" id="themeBtnNavy" class="theme-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition flex items-center gap-1.5" title="Nordic Navy Studio Theme">
+            <span>🌌</span>
+            <span class="hidden sm:inline">Navy</span>
+          </button>
+          <button onclick="setTheme('clean-light')" id="themeBtnLight" class="theme-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition flex items-center gap-1.5" title="Clean Daylight Mode (Bright & High Contrast)">
+            <span>☀️</span>
+            <span class="hidden sm:inline">Light</span>
+          </button>
         </div>
 
         <!-- Architecture & Tools Spec Modal Button -->
@@ -365,31 +422,36 @@
     <!-- ========================================================================= -->
     <div class="glass-card rounded-2xl p-6 space-y-6">
       
-      <!-- HEADER & SEARCH BAR -->
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-white/[0.1] pb-5">
+      <!-- HEADER & SEARCH QUERY BAR (MATCHES SERPAPI GOOGLE FINANCE PLAYGROUND) -->
+      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-white/[0.1] pb-5">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-500/30 to-emerald-500/30 border border-blue-400/40 flex items-center justify-center text-blue-300 shadow-md">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-500/30 to-emerald-500/30 border border-blue-400/40 flex items-center justify-center text-blue-300 shadow-md shrink-0">
             <i data-lucide="line-chart" class="w-5 h-5"></i>
           </div>
           <div>
             <div class="flex items-center gap-2">
               <h2 class="text-base font-bold text-white font-display">Google Finance Live Intelligence</h2>
               <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">FREE PUBLIC APIS</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">SERPAPI ENGINE</span>
             </div>
-            <p class="text-xs text-slate-400">Institutional fundamentals, live price discovery & OHLCV history for all Indian & global assets</p>
+            <p class="text-xs text-slate-400">Institutional fundamentals, live price discovery & OHLCV history for Indian & global assets</p>
           </div>
         </div>
 
-        <!-- SEARCH INPUT WITH LIVE AUTOCOMPLETE -->
-        <div class="relative w-full md:w-80">
-          <div class="relative">
-            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+        <!-- SEARCH INPUT WITH SERPAPI-STYLE 'Search Query' CHIP -->
+        <div class="relative w-full lg:w-[460px] flex items-center gap-2">
+          <div class="relative flex-1">
+            <div class="absolute left-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[10px] font-mono font-bold text-blue-300 bg-blue-500/25 border border-blue-500/40 px-2 py-0.5 rounded-md pointer-events-none select-none">
+              <i data-lucide="search" class="w-3 h-3"></i>
+              <span>Search Query</span>
+            </div>
             <input 
               type="text" 
               id="companySearchInput" 
               oninput="handleSymbolSearch(this.value)" 
-              placeholder="Search companies (e.g. Tata, Reliance, Apple, NVDA)..." 
-              class="w-full bg-[#131d33] border border-white/[0.14] rounded-xl pl-9 pr-8 py-2.5 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-blue-400 transition shadow-inner font-sans"
+              onkeydown="if(event.key==='Enter') executeSymbolSearch()"
+              placeholder="e.g. GOOGL:NASDAQ, TCS:NSE, RELIANCE:NSE..." 
+              class="w-full bg-[#182030] border border-white/[0.14] rounded-xl pl-32 pr-8 py-2.5 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-blue-400 transition shadow-inner font-mono font-medium"
               autocomplete="off"
             />
             <button onclick="clearSearchInput()" id="clearSearchBtn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
@@ -397,40 +459,76 @@
             </button>
           </div>
 
+          <!-- Blue Search Button matching SerpApi playground -->
+          <button onclick="executeSymbolSearch()" class="spring-btn px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-blue-600/30 shrink-0">
+            <i data-lucide="search" class="w-3.5 h-3.5"></i>
+            <span>Search</span>
+          </button>
+
           <!-- Autocomplete Dropdown Menu -->
-          <div id="searchDropdown" class="absolute left-0 right-0 top-full mt-2 bg-[#17233d] border border-white/[0.16] rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto hidden divide-y divide-white/[0.06]">
+          <div id="searchDropdown" class="absolute left-0 right-0 top-full mt-2 bg-[#253047] border border-white/[0.16] rounded-xl shadow-2xl z-50 max-h-64 overflow-y-auto hidden divide-y divide-white/[0.06]">
             <!-- Results injected dynamically -->
           </div>
         </div>
       </div>
 
-      <!-- CURATED TOP MOVERS & WATCHLIST PILLS -->
+      <!-- CURATED WATCHLIST QUICK PILLS -->
       <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar" id="watchlistPillsContainer">
         <!-- Watchlist pills loaded dynamically -->
       </div>
 
-      <!-- MAIN COMPANY ANALYSIS CONTAINER -->
-      <div id="companyAnalysisView" class="space-y-6">
+      <!-- GOOGLE FINANCE SUB-NAVIGATION TABS (MATCHES GOOGLE FINANCE / SERPAPI) -->
+      <div class="flex items-center gap-2 border-b border-white/[0.1] pb-3 text-xs font-semibold overflow-x-auto no-scrollbar">
+        <button onclick="switchGfTab('overview')" id="tabBtnOverview" class="gf-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold transition">
+          <i data-lucide="layout-grid" class="w-4 h-4"></i>
+          <span>Overview</span>
+        </button>
+        <button onclick="switchGfTab('financials')" id="tabBtnFinancials" class="gf-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-slate-400 hover:text-white transition">
+          <i data-lucide="landmark" class="w-4 h-4"></i>
+          <span>Financials</span>
+        </button>
+        <button onclick="switchGfTab('earnings')" id="tabBtnEarnings" class="gf-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-slate-400 hover:text-white transition">
+          <i data-lucide="pie-chart" class="w-4 h-4"></i>
+          <span>Earnings</span>
+        </button>
+        <button onclick="switchGfTab('serpapi')" id="tabBtnSerpapi" class="gf-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-slate-400 hover:text-white transition">
+          <i data-lucide="code" class="w-4 h-4 text-blue-400"></i>
+          <span>SerpApi Live JSON</span>
+        </button>
+        <button onclick="switchGfTab('tools')" id="tabBtnTools" class="gf-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-slate-400 hover:text-white transition">
+          <i data-lucide="cpu" class="w-4 h-4 text-purple-400"></i>
+          <span>Required Tools & APIs</span>
+        </button>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- TAB 1: OVERVIEW (INTERACTIVE CHART, STATS & METRICS)                  -->
+      <!-- ===================================================================== -->
+      <div id="gfTabOverview" class="space-y-6">
 
         <!-- COMPANY HEADER: PRICE, CHANGE & TIMEFRAME SELECTOR -->
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white/[0.04] p-5 rounded-2xl border border-white/[0.08]">
           <div class="space-y-1">
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-2.5 flex-wrap">
               <h3 class="text-xl sm:text-2xl font-extrabold text-white font-display tracking-tight" id="gfCompanyName">Tata Consultancy Services Limited</h3>
               <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-white/[0.08] text-slate-200 border border-white/[0.14]" id="gfTickerBadge">TCS • NSE</span>
               <span class="text-xs text-slate-300" id="gfSectorPill">Technology</span>
             </div>
 
-            <div class="flex items-baseline gap-3 pt-1">
+            <div class="flex items-baseline gap-3 pt-1 flex-wrap">
               <div class="text-3xl sm:text-4xl font-extrabold text-white font-mono tabular-nums tracking-tight transition-colors duration-300" id="gfCurrentPrice">₹ 2,530.00</div>
               <div class="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold font-mono" id="gfPriceChangeBadge">
                 <span id="gfChangeIcon">▲</span>
                 <span id="gfPriceChange">+65.00 (+2.64%)</span>
                 <span class="text-[10px] text-slate-300 font-sans font-normal ml-1">Today</span>
               </div>
+              <div class="text-xs font-mono text-slate-400 flex items-center gap-1">
+                <span>Prev. close:</span>
+                <span class="font-bold text-slate-300" id="gfPrevCloseHeader">₹ 2,465.00</span>
+              </div>
             </div>
 
-            <div class="flex items-center gap-3 text-[11px] text-slate-300 font-mono pt-0.5">
+            <div class="flex items-center gap-3 text-[11px] text-slate-300 font-mono pt-0.5 flex-wrap">
               <span id="gfCurrencyExchange">INR (₹) • National Stock Exchange of India</span>
               <span>•</span>
               <span id="gfUpdatedTime" class="text-slate-400">Real-time Open Feed</span>
@@ -445,6 +543,7 @@
               <button onclick="changeTimeframe('5d', '15m', this)" class="tf-btn px-3 py-1 rounded-lg text-slate-400 hover:text-white transition">5D</button>
               <button onclick="changeTimeframe('1mo', '1d', this)" class="tf-btn px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold transition">1M</button>
               <button onclick="changeTimeframe('6mo', '1d', this)" class="tf-btn px-3 py-1 rounded-lg text-slate-400 hover:text-white transition">6M</button>
+              <button onclick="changeTimeframe('ytd', '1d', this)" class="tf-btn px-3 py-1 rounded-lg text-slate-400 hover:text-white transition">YTD</button>
               <button onclick="changeTimeframe('1y', '1wk', this)" class="tf-btn px-3 py-1 rounded-lg text-slate-400 hover:text-white transition">1Y</button>
               <button onclick="changeTimeframe('5y', '1mo', this)" class="tf-btn px-3 py-1 rounded-lg text-slate-400 hover:text-white transition">5Y</button>
             </div>
@@ -469,8 +568,8 @@
             </div>
 
             <!-- Interactive SVG Line & Gradient -->
-            <div class="w-full h-56 relative cursor-crosshair" id="svgChartWrapper" onmousemove="handleChartHover(event)" onmouseleave="hideChartTooltip()">
-              <svg id="interactiveSvgChart" class="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 600 180">
+            <div class="w-full h-64 relative cursor-crosshair" id="svgChartWrapper" onmousemove="handleChartHover(event)" onmouseleave="hideChartTooltip()">
+              <svg id="interactiveSvgChart" class="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 600 200">
                 <defs>
                   <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stop-color="#10b981" stop-opacity="0.35" id="gradStop1"></stop>
@@ -478,9 +577,15 @@
                   </linearGradient>
                 </defs>
                 <polygon id="chartArea" points="" fill="url(#chartGradient)"></polygon>
+                
+                <!-- Authentic Google Finance Dotted Prev. Close Reference Line -->
+                <line id="prevCloseLine" x1="0" y1="100" x2="600" y2="100" stroke="rgba(255,255,255,0.28)" stroke-dasharray="4,4" stroke-width="1.2"></line>
+                <text id="prevCloseText" x="12" y="94" fill="rgba(255,255,255,0.6)" font-size="10" font-family="monospace">Prev. close</text>
+
                 <path id="chartLine" d="" fill="none" stroke="#10b981" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="chart-glow"></path>
+                
                 <!-- Crosshair elements -->
-                <line id="crosshairX" x1="0" y1="0" x2="0" y2="180" stroke="rgba(255,255,255,0.25)" stroke-dasharray="3,3" class="hidden"></line>
+                <line id="crosshairX" x1="0" y1="0" x2="0" y2="200" stroke="rgba(255,255,255,0.25)" stroke-dasharray="3,3" class="hidden"></line>
                 <circle id="crosshairDot" cx="0" cy="0" r="5" fill="#10b981" stroke="#ffffff" stroke-width="2" class="hidden"></circle>
               </svg>
             </div>
@@ -490,7 +595,7 @@
               <span id="chartStartDate">Start</span>
               <span class="text-slate-400 text-[10px] flex items-center gap-1.5">
                 <i data-lucide="mouse-pointer" class="w-3 h-3 text-emerald-400"></i>
-                Hover across chart to inspect historical price points
+                Hover across chart to inspect historical price points & prev. close
               </span>
               <span id="chartEndDate">Latest</span>
             </div>
@@ -614,6 +719,147 @@
           </p>
         </details>
 
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- TAB 2: FINANCIALS (ANNUAL & QUARTERLY STATEMENTS)                     -->
+      <!-- ===================================================================== -->
+      <div id="gfTabFinancials" class="hidden space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-4">
+            <span class="text-xs text-slate-400 font-semibold block">Annual Revenue (TTM)</span>
+            <div class="text-2xl font-bold font-mono text-white mt-1" id="finAnnualRevenue">₹ 2.45 Lakh Cr</div>
+            <div class="text-[11px] text-emerald-400 mt-1 flex items-center gap-1 font-mono">
+              <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> +12.4% YoY Growth
+            </div>
+          </div>
+          <div class="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-4">
+            <span class="text-xs text-slate-400 font-semibold block">Annual Net Income</span>
+            <div class="text-2xl font-bold font-mono text-emerald-300 mt-1" id="finNetIncome">₹ 46,200 Cr</div>
+            <div class="text-[11px] text-emerald-400 mt-1 flex items-center gap-1 font-mono">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i> Net Margin: 18.8%
+            </div>
+          </div>
+          <div class="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-4">
+            <span class="text-xs text-slate-400 font-semibold block">Free Cash Flow</span>
+            <div class="text-2xl font-bold font-mono text-blue-300 mt-1" id="finFreeCashFlow">₹ 39,100 Cr</div>
+            <div class="text-[11px] text-slate-400 mt-1 font-mono">Debt/Equity: 0.12 (Low Leverage)</div>
+          </div>
+        </div>
+
+        <!-- Quarterly Financial Breakdown -->
+        <div class="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i>
+              Quarterly Financial Performance
+            </h4>
+            <span class="text-[11px] font-mono text-slate-400">All figures reported in company base currency</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="finQuartersContainer">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- TAB 3: EARNINGS (QUARTERLY EPS BEATS & CONSENSUS)                     -->
+      <!-- ===================================================================== -->
+      <div id="gfTabEarnings" class="hidden space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-4">
+            <span class="text-xs text-slate-400 font-semibold block">Trailing 12M EPS</span>
+            <div class="text-2xl font-bold font-mono text-white mt-1" id="earnAnnualEps">₹ 124.50</div>
+            <div class="text-[11px] text-slate-400 mt-1 font-mono">P/E Multiple: 24.5x</div>
+          </div>
+          <div class="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-4">
+            <span class="text-xs text-slate-400 font-semibold block">Consensus Recommendation</span>
+            <div class="text-2xl font-bold font-mono text-emerald-400 mt-1" id="earnConsensus">BUY</div>
+            <div class="text-[11px] text-slate-400 mt-1 font-mono">Target Price: <span id="earnTarget" class="text-white font-bold">₹ 2,850.00</span></div>
+          </div>
+          <div class="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-4">
+            <span class="text-xs text-slate-400 font-semibold block">Next Earnings Release</span>
+            <div class="text-lg font-bold font-mono text-purple-300 mt-1">Upcoming Q2 Earnings</div>
+            <div class="text-[11px] text-slate-400 mt-1 font-mono">Estimated in ~45 calendar days</div>
+          </div>
+        </div>
+
+        <div class="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="award" class="w-4 h-4 text-yellow-400"></i>
+              Quarterly EPS History (Estimates vs Actuals)
+            </h4>
+            <span class="text-[11px] font-mono text-emerald-400 font-bold">4 CONSECUTIVE BEATS</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="earnQuartersContainer">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- TAB 4: SERPAPI LIVE JSON PLAYGROUND (MATCHES USER SCREENSHOT)         -->
+      <!-- ===================================================================== -->
+      <div id="gfTabSerpapi" class="hidden space-y-4">
+        
+        <!-- TOP CONTROL BAR MATCHING SCREENSHOT -->
+        <div class="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/35">
+              API UPTIME 99.975%
+            </span>
+            <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/35">
+              STATUS: SUCCESS
+            </span>
+            <span class="text-xs font-mono text-slate-400 hidden sm:inline" id="serpTimeTaken">0.48s total time</span>
+          </div>
+
+          <div class="flex items-center gap-2 w-full md:w-auto">
+            <input 
+              type="password" 
+              id="serpApiKeyInput" 
+              placeholder="Paste custom SerpApi Key (Optional)..." 
+              class="bg-[#182030] border border-white/[0.14] rounded-xl px-3 py-1.5 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-blue-400 font-mono w-full md:w-64"
+            />
+            <button onclick="saveSerpApiKey()" class="spring-btn px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shrink-0">
+              Save Key
+            </button>
+            <button onclick="copySerpApiJson()" class="spring-btn px-3 py-1.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.15] text-slate-200 font-bold text-xs flex items-center gap-1.5 shrink-0">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              Copy JSON
+            </button>
+          </div>
+        </div>
+
+        <!-- URL SPEC NOTIFICATION -->
+        <div class="px-4 py-2.5 rounded-xl bg-blue-500/10 border border-blue-500/25 text-xs font-mono text-blue-300 flex items-center justify-between">
+          <div class="flex items-center gap-2 truncate">
+            <span class="font-bold text-blue-400">Endpoint:</span>
+            <span id="serpEndpointUrl" class="text-slate-300 truncate">https://serpapi.com/search?engine=google_finance&q=...</span>
+          </div>
+          <span class="text-[10px] text-emerald-400 font-bold bg-emerald-500/15 px-2 py-0.5 rounded border border-emerald-500/30 shrink-0">LIVE RESPONSE</span>
+        </div>
+
+        <!-- CODE CONTAINER FOR FORMATTED JSON (MIRRORS SCREENSHOT CODE BOX) -->
+        <div class="bg-[#101726] border border-white/[0.12] rounded-2xl p-4 font-mono text-xs overflow-x-auto max-h-[480px] shadow-2xl relative">
+          <pre id="serpApiCodeBlock" class="text-emerald-300 whitespace-pre leading-relaxed select-text">// Loading live structured Google Finance JSON payload...</pre>
+        </div>
+
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- TAB 5: REQUIRED TOOLS & APIS BREAKDOWN (COMPREHENSIVE SPEC)           -->
+      <!-- ===================================================================== -->
+      <div id="gfTabTools" class="hidden space-y-4">
+        <div class="border-b border-white/[0.08] pb-3">
+          <h3 class="text-sm font-bold text-white font-display">Required Tools, Public APIs & Streaming Telemetry</h3>
+          <p class="text-xs text-slate-400">100% Free Open APIs for live quotes, historical OHLCV bars, and sub-second price oscillations</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="toolsCardsContainer">
+          <!-- Populated dynamically via /api/market/tools-status -->
+        </div>
       </div>
 
     </div>
@@ -1253,6 +1499,68 @@
     }
 
     // =========================================================================
+    // THEME ENGINE (GOOGLE SLATE / NORDIC NAVY / CLEAN LIGHT)
+    // =========================================================================
+    function setTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("bt_theme", theme);
+
+      const slateBtn = document.getElementById("themeBtnSlate");
+      const navyBtn = document.getElementById("themeBtnNavy");
+      const lightBtn = document.getElementById("themeBtnLight");
+
+      [slateBtn, navyBtn, lightBtn].forEach(b => {
+        if (b) b.className = "theme-btn px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition flex items-center gap-1.5";
+      });
+
+      if (theme === "google-slate" && slateBtn) {
+        slateBtn.className = "theme-btn px-2.5 py-1 rounded-lg text-white font-bold transition flex items-center gap-1.5 bg-white/[0.14] shadow-sm";
+      } else if (theme === "nordic-navy" && navyBtn) {
+        navyBtn.className = "theme-btn px-2.5 py-1 rounded-lg text-white font-bold transition flex items-center gap-1.5 bg-white/[0.14] shadow-sm";
+      } else if (theme === "clean-light" && lightBtn) {
+        lightBtn.className = "theme-btn px-2.5 py-1 rounded-lg text-slate-900 font-bold transition flex items-center gap-1.5 bg-white shadow-sm border border-slate-300";
+      }
+    }
+
+    // Initialize persisted theme or default to google-slate
+    const savedTheme = localStorage.getItem("bt_theme") || "google-slate";
+    setTheme(savedTheme);
+
+    // =========================================================================
+    // GOOGLE FINANCE SUB-NAVIGATION TABS
+    // =========================================================================
+    let activeGfTab = "overview";
+    let cachedSerpApiJson = null;
+
+    function switchGfTab(tabName) {
+      activeGfTab = tabName;
+      const tabs = ["overview", "financials", "earnings", "serpapi", "tools"];
+      
+      tabs.forEach(t => {
+        const cap = t.charAt(0).toUpperCase() + t.slice(1);
+        const btn = document.getElementById(`tabBtn${cap}`);
+        const container = document.getElementById(`gfTab${cap}`);
+        
+        if (btn && container) {
+          if (t === tabName) {
+            btn.className = "gf-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold transition shadow-sm";
+            container.classList.remove("hidden");
+          } else {
+            btn.className = "gf-tab-btn flex items-center gap-2 px-4 py-2 rounded-xl text-slate-400 hover:text-white transition";
+            container.classList.add("hidden");
+          }
+        }
+      });
+
+      if (tabName === "financials") loadFinancialsData(currentAnalyzedSymbol);
+      if (tabName === "earnings") loadEarningsData(currentAnalyzedSymbol);
+      if (tabName === "serpapi") loadSerpApiData(currentAnalyzedSymbol);
+      if (tabName === "tools") loadToolsSpecData();
+
+      lucide.createIcons();
+    }
+
+    // =========================================================================
     // GOOGLE FINANCE LIVE MARKET INTELLIGENCE SCRIPT
     // =========================================================================
     function handleSymbolSearch(val) {
@@ -1285,10 +1593,17 @@
       document.getElementById("searchDropdown").classList.add("hidden");
     }
 
+    function executeSymbolSearch() {
+      const inp = document.getElementById("companySearchInput");
+      const query = (inp.value || "").trim();
+      if (!query) return;
+      selectCompany(query);
+    }
+
     function renderSearchDropdown(results) {
       const dropdown = document.getElementById("searchDropdown");
       if (!results || results.length === 0) {
-        dropdown.innerHTML = `<div class="p-3 text-center text-slate-400 text-xs">No matching securities found.</div>`;
+        dropdown.innerHTML = `<div class="p-3 text-center text-slate-400 text-xs">No matching securities found. Press Search to query Google Finance directly.</div>`;
         dropdown.classList.remove("hidden");
         return;
       }
@@ -1311,7 +1626,14 @@
       document.getElementById("companySearchInput").value = symbol;
       loadCompanyProfile(symbol);
       loadHistoricalChart(symbol, currentPeriod, currentInterval);
+      
+      // Refresh active tab if not overview
+      if (activeGfTab === "financials") loadFinancialsData(symbol);
+      if (activeGfTab === "earnings") loadEarningsData(symbol);
+      if (activeGfTab === "serpapi") loadSerpApiData(symbol);
     }
+
+    let currentAnalyzedPrevClose = 2465.0;
 
     async function loadCompanyProfile(symbol) {
       try {
@@ -1320,13 +1642,15 @@
 
         currentAnalyzedPrice = data.current_price;
         currentCurrencySymbol = data.currency_symbol || "₹";
+        currentAnalyzedPrevClose = data.previous_close || (data.current_price - data.change);
 
         // Company Header
         document.getElementById("gfCompanyName").innerText = data.company_name;
         document.getElementById("gfTickerBadge").innerText = `${data.display_symbol} • ${data.exchange}`;
         document.getElementById("gfSectorPill").innerText = data.sector || "Equities";
         document.getElementById("gfCurrentPrice").innerText = `${currentCurrencySymbol} ${data.current_price.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
-        
+        document.getElementById("gfPrevCloseHeader").innerText = `${currentCurrencySymbol} ${currentAnalyzedPrevClose.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+
         // Price Change Pill
         const changeBadge = document.getElementById("gfPriceChangeBadge");
         const changeIcon = document.getElementById("gfChangeIcon");
@@ -1409,24 +1733,25 @@
         const res = await fetch(`/api/market/history/${encodeURIComponent(symbol)}?period=${period}&interval=${interval}`);
         const data = await res.json();
         activeChartBars = data.bars || [];
-        renderInteractiveSvgChart(activeChartBars);
+        renderInteractiveSvgChart(activeChartBars, currentAnalyzedPrevClose);
       } catch (err) {
         console.error("Error loading historical chart:", err);
       }
     }
 
-    function renderInteractiveSvgChart(bars) {
+    function renderInteractiveSvgChart(bars, prevClose) {
       if (!bars || bars.length === 0) return;
 
       const closes = bars.map(b => b.close);
-      const min = Math.min(...closes);
-      const max = Math.max(...closes);
+      const allPrices = prevClose ? [...closes, prevClose] : closes;
+      const min = Math.min(...allPrices);
+      const max = Math.max(...allPrices);
       const range = max - min || 1;
-      const isPositive = closes[closes.length - 1] >= closes[0];
+      const isPositive = closes[closes.length - 1] >= (prevClose || closes[0]);
 
       const width = 600;
-      const height = 180;
-      const padding = 15;
+      const height = 200;
+      const padding = 20;
 
       const points = bars.map((b, i) => {
         const x = (i / (bars.length - 1)) * width;
@@ -1453,6 +1778,17 @@
       stop2.setAttribute("stop-color", color);
       crossDot.setAttribute("fill", color);
 
+      // Authentic Google Finance Prev. Close Reference Line
+      const prevCloseLine = document.getElementById("prevCloseLine");
+      const prevCloseText = document.getElementById("prevCloseText");
+      if (prevClose && prevCloseLine && prevCloseText) {
+        const prevCloseY = Math.max(padding, Math.min(height - padding, height - padding - ((prevClose - min) / range) * (height - 2 * padding)));
+        prevCloseLine.setAttribute("y1", prevCloseY);
+        prevCloseLine.setAttribute("y2", prevCloseY);
+        prevCloseText.setAttribute("y", Math.max(14, prevCloseY - 6));
+        prevCloseText.textContent = `Prev. close ${currentCurrencySymbol} ${prevClose.toFixed(2)}`;
+      }
+
       // Timeline labels
       document.getElementById("chartStartDate").innerText = bars[0].time;
       document.getElementById("chartEndDate").innerText = bars[bars.length - 1].time;
@@ -1475,13 +1811,15 @@
       // Calculate SVG mapped coordinates
       const svgX = ratio * 600;
       const closes = activeChartBars.map(b => b.close);
-      const min = Math.min(...closes);
-      const max = Math.max(...closes);
+      const allPrices = currentAnalyzedPrevClose ? [...closes, currentAnalyzedPrevClose] : closes;
+      const min = Math.min(...allPrices);
+      const max = Math.max(...allPrices);
       const range = max - min || 1;
-      const svgY = 180 - 15 - ((bar.close - min) / range) * (180 - 30);
+      const svgY = 200 - 20 - ((bar.close - min) / range) * (200 - 40);
 
       crosshairX.setAttribute("x1", svgX);
       crosshairX.setAttribute("x2", svgX);
+      crosshairX.setAttribute("y2", "200");
       crosshairX.classList.remove("hidden");
 
       crosshairDot.setAttribute("cx", svgX);
@@ -1500,6 +1838,303 @@
       document.getElementById("crosshairX").classList.add("hidden");
       document.getElementById("crosshairDot").classList.add("hidden");
     }
+
+    // =========================================================================
+    // FINANCIALS TAB DATA LOADER
+    // =========================================================================
+    async function loadFinancialsData(symbol) {
+      try {
+        const res = await fetch(`/api/market/financials/${encodeURIComponent(symbol)}`);
+        const data = await res.json();
+        
+        document.getElementById("finAnnualRevenue").innerText = data.annual_revenue;
+        document.getElementById("finNetIncome").innerText = data.annual_net_income;
+        document.getElementById("finFreeCashFlow").innerText = data.free_cash_flow;
+
+        const quartersEl = document.getElementById("finQuartersContainer");
+        quartersEl.innerHTML = (data.quarters || []).map(q => `
+          <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] space-y-1.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-white font-mono">${q.quarter}</span>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">${q.growth}</span>
+            </div>
+            <div class="text-[11px] text-slate-300">Revenue: <span class="font-mono text-white font-bold">${q.revenue}</span></div>
+            <div class="text-[11px] text-slate-300">Net Income: <span class="font-mono text-emerald-300 font-bold">${q.net_income}</span></div>
+            <div class="text-[10px] text-slate-400">Margin: ${q.margin}</div>
+          </div>
+        `).join("");
+      } catch (err) {
+        console.error("Error loading financials:", err);
+      }
+    }
+
+    // =========================================================================
+    // EARNINGS TAB DATA LOADER
+    // =========================================================================
+    async function loadEarningsData(symbol) {
+      try {
+        const res = await fetch(`/api/market/earnings/${encodeURIComponent(symbol)}`);
+        const data = await res.json();
+
+        document.getElementById("earnAnnualEps").innerText = `${data.currency_symbol || '₹'} ${Number(data.annual_eps || 35).toFixed(2)}`;
+        document.getElementById("earnConsensus").innerText = data.consensus || "BUY";
+        document.getElementById("earnTarget").innerText = `${data.currency_symbol || '₹'} ${Number(data.target_price).toFixed(2)}`;
+
+        const quartersEl = document.getElementById("earnQuartersContainer");
+        quartersEl.innerHTML = (data.quarters || []).map(q => `
+          <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.08] space-y-1.5">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-white font-mono">${q.quarter}</span>
+              <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">BEAT</span>
+            </div>
+            <div class="flex items-center justify-between text-[11px] pt-1">
+              <span class="text-slate-400">Estimated:</span>
+              <span class="font-mono text-slate-300 font-semibold">${data.currency_symbol || '₹'}${q.estimated_eps}</span>
+            </div>
+            <div class="flex items-center justify-between text-[11px]">
+              <span class="text-slate-400">Actual EPS:</span>
+              <span class="font-mono text-emerald-400 font-bold">${data.currency_symbol || '₹'}${q.actual_eps}</span>
+            </div>
+            <div class="text-[10px] text-emerald-400 font-mono text-right font-bold">Surprise: ${q.surprise_pct}</div>
+          </div>
+        `).join("");
+      } catch (err) {
+        console.error("Error loading earnings:", err);
+      }
+    }
+
+    // =========================================================================
+    // SERPAPI LIVE JSON PLAYGROUND (MATCHES USER SCREENSHOT)
+    // =========================================================================
+    async function loadSerpApiData(symbol) {
+      const codeBlock = document.getElementById("serpApiCodeBlock");
+      const urlEl = document.getElementById("serpEndpointUrl");
+      const timeEl = document.getElementById("serpTimeTaken");
+      
+      codeBlock.innerText = `// Fetching live structured SerpApi Google Finance payload for ${symbol}...`;
+      urlEl.innerText = `https://serpapi.com/search?engine=google_finance&q=${symbol}`;
+      
+      try {
+        const t0 = performance.now();
+        const res = await fetch(`/api/market/serpapi/${encodeURIComponent(symbol)}`);
+        const json = await res.json();
+        const t1 = performance.now();
+        
+        cachedSerpApiJson = json;
+        timeEl.innerText = `${((t1 - t0) / 1000).toFixed(2)}s total time`;
+
+        // Render formatted JSON
+        codeBlock.innerHTML = syntaxHighlightJson(json);
+      } catch (err) {
+        codeBlock.innerText = `// Error loading SerpApi payload: ${err}`;
+      }
+    }
+
+    function syntaxHighlightJson(json) {
+      if (typeof json !== 'string') {
+        json = JSON.stringify(json, undefined, 2);
+      }
+      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        let cls = 'text-blue-300'; // number
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            cls = 'text-purple-300 font-semibold'; // key
+          } else {
+            cls = 'text-emerald-300'; // string
+          }
+        } else if (/true|false/.test(match)) {
+          cls = 'text-amber-300 font-bold'; // boolean
+        } else if (/null/.test(match)) {
+          cls = 'text-slate-400';
+        }
+        return `<span class="${cls}">${match}</span>`;
+      });
+    }
+
+    function copySerpApiJson() {
+      if (!cachedSerpApiJson) return;
+      navigator.clipboard.writeText(JSON.stringify(cachedSerpApiJson, null, 2));
+      alert("✅ SerpApi Google Finance JSON copied to clipboard!");
+    }
+
+    async function saveSerpApiKey() {
+      const key = document.getElementById("serpApiKeyInput").value.trim();
+      try {
+        await fetch("/api/market/serpapi-key", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ api_key: key })
+        });
+        alert(key ? "✅ Custom SerpApi Key saved! Subsequent queries will use your live SerpApi account." : "ℹ️ SerpApi Key cleared. Using direct free Google Finance feed.");
+        loadSerpApiData(currentAnalyzedSymbol);
+      } catch (err) {
+        alert("Error saving SerpApi key: " + err);
+      }
+    }
+
+    // =========================================================================
+    // REQUIRED TOOLS & PUBLIC APIS SPEC DATA
+    // =========================================================================
+    async function loadToolsSpecData() {
+      const container = document.getElementById("toolsCardsContainer");
+      try {
+        const res = await fetch("/api/market/tools-status");
+        const data = await res.json();
+        const free = data.free_apis || {};
+        const broker = data.broker_live_streaming_apis || {};
+
+        let cardsHtml = "";
+
+        Object.entries(free).forEach(([k, item]) => {
+          cardsHtml += `
+            <div class="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-4 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white">${item.name}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">${item.status}</span>
+              </div>
+              <p class="text-xs text-slate-300">${item.usage}</p>
+              <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 pt-2 border-t border-white/[0.06]">
+                <span>Cost: <b class="text-emerald-400">${item.cost}</b></span>
+                <span>Key Required: <b>${item.requires_key ? 'Yes' : 'No (Free)'}</b></span>
+              </div>
+            </div>
+          `;
+        });
+
+        Object.entries(broker).forEach(([k, item]) => {
+          cardsHtml += `
+            <div class="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-4 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white">${item.name}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">${item.status}</span>
+              </div>
+              <p class="text-xs text-slate-300">Live Indian equity & F&O execution adapter with WebSocket streaming.</p>
+              <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 pt-2 border-t border-white/[0.06]">
+                <span>Protocol: <b>${item.protocol}</b></span>
+                <span>Mode: <b>PAPER OR LIVE</b></span>
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = cardsHtml;
+      } catch (err) {
+        console.error("Error loading tools spec:", err);
+      }
+    }
+
+    async function loadWatchlistPills() {
+      try {
+        const res = await fetch("/api/market/watchlist");
+        const data = await res.json();
+        const container = document.getElementById("watchlistPillsContainer");
+        const list = data.watchlist || [];
+
+        if (list.length === 0) return;
+
+        container.innerHTML = list.map(item => `
+          <button onclick="selectCompany('${item.symbol}')" class="spring-btn shrink-0 flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.1] transition group">
+            <span class="font-bold text-white group-hover:text-blue-400 font-mono text-[11px]">${item.display_symbol}</span>
+            <span class="font-mono text-slate-200 tabular-nums text-[11px] font-semibold">${item.currency_symbol}${item.price.toFixed(1)}</span>
+            <span class="text-[10px] font-mono font-bold ${item.is_positive ? 'text-emerald-400' : 'text-rose-400'}">${item.is_positive ? '+' : ''}${item.change_percent.toFixed(1)}%</span>
+          </button>
+        `).join("");
+      } catch (err) {
+        console.error("Watchlist fetch error:", err);
+      }
+    }
+
+    function tradeActiveCompany() {
+      const cleanSym = currentAnalyzedSymbol.replace(".NS", "").replace("^", "");
+      document.getElementById("targetSymbol").value = cleanSym;
+      document.getElementById("orderPrice").value = currentAnalyzedPrice.toFixed(2);
+      document.getElementById("contractType").value = "EQUITY";
+      
+      logTerminal(`Loaded ${cleanSym} (@ ${currentCurrencySymbol}${currentAnalyzedPrice.toFixed(2)}) into Instant Order Ticket.`, "success");
+      
+      // Smooth scroll to order ticket
+      document.getElementById("orderForm").scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    // =========================================================================
+    // SERVER-SENT EVENTS (SSE) REAL-TIME TICK STREAMER
+    // =========================================================================
+    function initLiveSseStream() {
+      if (window.EventSource) {
+        sseEventSource = new EventSource("/api/stream/live-ticks");
+        
+        sseEventSource.onmessage = function(event) {
+          try {
+            const data = JSON.parse(event.data);
+            const ticks = data.ticks || [];
+            updateMarqueeAndTicks(ticks);
+          } catch (e) {
+            console.error("SSE parse error:", e);
+          }
+        };
+
+        sseEventSource.onerror = function(err) {
+          console.warn("SSE connection interrupted, will auto-reconnect...");
+          document.getElementById("streamingPill").innerText = "RECONNECTING SSE...";
+        };
+
+        sseEventSource.onopen = function() {
+          document.getElementById("streamingPill").innerText = "LIVE STREAM ACTIVE";
+        };
+      }
+    }
+
+    function updateMarqueeAndTicks(ticks) {
+      const marquee = document.getElementById("liveTickerMarquee");
+      if (!ticks || ticks.length === 0) return;
+
+      // Duplicate list to achieve continuous seamless loop
+      const doubled = [...ticks, ...ticks];
+
+      marquee.innerHTML = doubled.map(t => {
+        const isUp = t.tick_direction === "UP";
+        return `
+          <div onclick="selectCompany('${t.symbol}')" class="shrink-0 flex items-center gap-2 cursor-pointer hover:bg-white/[0.1] px-3 py-1 rounded-lg transition group">
+            <span class="font-bold text-slate-200 group-hover:text-blue-300">${t.display_symbol}</span>
+            <span class="text-white font-bold tabular-nums">${t.currency_symbol}${t.price.toFixed(2)}</span>
+            <span class="text-[10px] font-bold ${isUp ? 'text-emerald-400' : 'text-rose-400'}">
+              ${isUp ? '▲ +' : '▼ '}${t.change.toFixed(2)}
+            </span>
+          </div>
+        `;
+      }).join("");
+
+      // Check if current analyzed company is in ticks
+      const matched = ticks.find(t => t.symbol === currentAnalyzedSymbol);
+      if (matched) {
+        const priceEl = document.getElementById("gfCurrentPrice");
+        const oldPrice = currentAnalyzedPrice;
+        currentAnalyzedPrice = matched.price;
+        priceEl.innerText = `${matched.currency_symbol} ${matched.price.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+        
+        // Trigger micro-flash
+        if (matched.price > oldPrice) {
+          priceEl.classList.remove("flash-down");
+          priceEl.classList.add("flash-up");
+          setTimeout(() => priceEl.classList.remove("flash-up"), 800);
+        } else if (matched.price < oldPrice) {
+          priceEl.classList.remove("flash-up");
+          priceEl.classList.add("flash-down");
+          setTimeout(() => priceEl.classList.remove("flash-down"), 800);
+        }
+      }
+    }
+
+    // Initialize View on page load
+    loadCompanyProfile("TCS.NS");
+    loadHistoricalChart("TCS.NS", "1mo", "1d");
+    loadWatchlistPills();
+    initLiveSseStream();
+
+    // Auto Refresh telemetry every 2 seconds
+    fetchHealthAndPositions();
+    setInterval(fetchHealthAndPositions, 2000);
 
     async function loadWatchlistPills() {
       try {

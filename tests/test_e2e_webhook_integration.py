@@ -274,3 +274,29 @@ def test_market_data_endpoints(test_setup):
     assert "watchlist" in watch_data
     assert len(watch_data["watchlist"]) > 0
 
+    # 5. Google Finance Direct & SerpApi Payloads
+    gf_resp = client.get("/api/market/google-finance/TCS")
+    assert gf_resp.status_code == 200
+    assert "google_finance_symbol" in gf_resp.json()
+
+    serp_resp = client.get("/api/market/serpapi/TCS")
+    assert serp_resp.status_code == 200
+    serp_data = serp_resp.json()
+    assert "search_metadata" in serp_data
+    assert "summary" in serp_data
+    assert "knowledge_graph" in serp_data
+
+    # 6. Financials & Earnings Tabs
+    fin_resp = client.get("/api/market/financials/TCS")
+    assert fin_resp.status_code == 200
+    assert "annual_revenue" in fin_resp.json()
+
+    earn_resp = client.get("/api/market/earnings/TCS")
+    assert earn_resp.status_code == 200
+    assert "quarters" in earn_resp.json()
+
+    # 7. Tools Status
+    tools_resp = client.get("/api/market/tools-status")
+    assert tools_resp.status_code == 200
+    assert "free_apis" in tools_resp.json()
+
